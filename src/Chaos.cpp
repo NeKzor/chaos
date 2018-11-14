@@ -1,6 +1,7 @@
 #include "Chaos.hpp"
 
 #include <cstring>
+#include <chrono>
 
 #include "Modules/Console.hpp"
 #include "Modules/Engine.hpp"
@@ -74,8 +75,9 @@ void Chaos::Cleanup()
     if (console)
         console->Print("chaos: Cya!\n");
 
-    this->hasStarted = false;
-    this->isRunning = false;
+    this->Stop();
+
+    this->mainIsRunning = false;
     this->mainThread.join();
 
     if (this->cheats)
@@ -91,7 +93,18 @@ void Chaos::Cleanup()
     SAFE_UNLOAD(console);
 }
 
-void Chaos::ResetCallbacks()
+void Chaos::Start()
+{
+    this->isRunning = true;
+}
+void Chaos::Stop()
+{
+    this->isRunning = false;
+    if (this->curCallback) {
+        this->curCallback->Reset();
+    }
+}
+void Chaos::Reset()
 {
     if (this->curCallback) {
         this->curCallback->Reset();
@@ -143,69 +156,78 @@ void Chaos::StartPluginThread()
 // Main loop
 void Chaos::StartMainThread()
 {
-    this->isRunning = true;
+    this->mainIsRunning = true;
     this->mainThread = std::thread([this]() {
-        this->ResetCallbacks();
-        while (this->isRunning) {
-            while (this->hasStarted) {
+        this->Reset();
+        while (this->mainIsRunning) {
+            while (this->isRunning) {
+                // Standard delay
                 auto delay = chaos_delay.GetInt();
                 if (delay == 0) {
                     auto max = chaos_delay_upper_bound.GetInt();
                     auto min = chaos_delay_lower_bound.GetInt();
                     delay = std::rand() % (max - min + 1) + min;
                 }
-                delay = std::max(delay, 10);
 
-                // Standard delay
-                for (int sec = 1; sec <= delay; ++sec) {
-                    GO_THE_FUCK_TO_SLEEP(1000);
-                    if (!this->hasStarted) {
-                        goto ended;
+                auto then = std::chrono::steady_clock::now() + std::chrono::seconds(std::max(delay, 10));
+                while (this->isRunning) {
+                    if (std::chrono::steady_clock::now() < then) {
+                        GO_THE_FUCK_TO_SLEEP(1);
+                        continue;
                     }
-                }
 
-                // Delay again when we are in a loading screen
-                while (!engine->hoststate->m_activeGame) {
-                    for (int sec = 1; sec <= 5; ++sec) {
-                        GO_THE_FUCK_TO_SLEEP(1000);
-                        if (!this->hasStarted) {
-                            goto ended;
+                    // Another delay if we hit a loading screen or menu
+                    then = std::chrono::steady_clock::now();
+                    while (this->isRunning) {
+                        auto notInGame = !engine->hoststate->m_activeGame
+                            || engine->hoststate->m_currentState != HOSTSTATES::HS_RUN;
+
+                        then = (notInGame)
+                            ? std::chrono::steady_clock::now() + std::chrono::seconds(5)
+                            : then;
+
+                        if (std::chrono::steady_clock::now() < then) {
+                            GO_THE_FUCK_TO_SLEEP(1);
+                            continue;
                         }
-                    }
-                }
 
-                // Dispatch a reset on previous callback
-                if (this->curCallback) {
-                    this->curCallback->Reset();
-                }
-                this->curCallback = nullptr;
+                        // Dispatch a reset on previous callback
+                        if (this->curCallback) {
+                            this->curCallback->Reset();
+                        }
+                        this->curCallback = nullptr;
 
-                // Handle queue logic for given mode
-                auto mode = chaos_mode.GetInt();
-                if (this->callbacks.size() == 0) {
-                    if (mode == 1) {
-                        this->hasStarted = false;
-                        this->ResetCallbacks();
-                        console->Print("Chaos ended!\n");
+                        // Handle queue logic for given mode
+                        auto mode = chaos_mode.GetInt();
+                        if (this->callbacks.size() == 0) {
+                            if (mode == 1) {
+                                this->isRunning = false;
+                                this->Reset();
+                                console->Print("Chaos ended!\n");
+                                break;
+                            } else if (mode >= 2) {
+                                this->Reset();
+                            }
+                        }
+
+                        // Dispatch random callback
+                        auto index = std::rand() % this->callbacks.size();
+                        this->curCallback = this->callbacks.at(index);
+                        this->curCallback->Dispatch();
+                        console->Print("%s\n", this->curCallback->name);
+
+                        // Handle mode again
+                        if (mode > 0) {
+                            this->callbacks.erase(this->callbacks.begin() + index);
+                        }
+
                         break;
-                    } else if (mode >= 2) {
-                        this->ResetCallbacks();
                     }
-                }
 
-                // Dispatch random callback
-                auto index = std::rand() % this->callbacks.size();
-                this->curCallback = this->callbacks.at(index);
-                this->curCallback->Dispatch();
-                console->Print("chaos: %s\n", this->curCallback->name);
-
-                // Handle mode again
-                if (mode > 0) {
-                    this->callbacks.erase(this->callbacks.begin() + index);
+                    break;
                 }
             }
-        ended:
-            GO_THE_FUCK_TO_SLEEP(100);
+            GO_THE_FUCK_TO_SLEEP(1);
         }
     });
 }

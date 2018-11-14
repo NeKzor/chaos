@@ -39,12 +39,12 @@ public:
     std::vector<RandomCallback*> callbacks;
 
     ChaosMode mode;
-    std::atomic<bool> hasStarted;
+    std::atomic<bool> isRunning;
 
 private:
     std::thread pluginThread;
     std::thread mainThread;
-    std::atomic<bool> isRunning;
+    std::atomic<bool> mainIsRunning;
 
 public:
     Chaos();
@@ -78,7 +78,9 @@ public:
     bool GetPlugin();
     void Cleanup();
 
-    void ResetCallbacks();
+    void Start();
+    void Stop();
+    void Reset();
 
 private:
     void StartPluginThread();

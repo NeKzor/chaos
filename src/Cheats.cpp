@@ -31,21 +31,21 @@ void Cheats::Shutdown()
     Command::UnregisterAll();
 }
 
-CON_COMMAND(chaos_start, "Start chaos mode.\n")
+CON_COMMAND(chaos_start, "Starts chaos mode.\n")
 {
     if (!sv_cheats.GetBool())
         sv_cheats.SetValue(1);
 
-    chaos.hasStarted = true;
+    chaos.Start();
     console->Print("Started chaos!\n");
 }
-CON_COMMAND(chaos_stop, "Stop chaos mode.\n")
+CON_COMMAND(chaos_stop, "Stops chaos mode.\n")
 {
-    chaos.hasStarted = false;
+    chaos.Stop();
     console->Print("Stopped chaos!\n");
 }
 CON_COMMAND(chaos_reset, "Reset chaos mode queue.\n")
 {
-    chaos.ResetCallbacks();
+    chaos.Reset();
     console->Print("Reset chaos!\n");
 }
