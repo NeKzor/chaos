@@ -11,9 +11,11 @@ OBJS=$(patsubst $(SDIR)%.cpp, $(ODIR)%.o, $(SRCS))
 CC=g++
 STFU=-Wno-unused-function -Wno-unused-variable -Wno-parentheses -Wno-unknown-pragmas
 CFLAGS=-std=c++17 -m32 -fPIC -static-libstdc++ -shared -Wall $(STFU) -I$(SDIR)
+PRINT=echo
 EXPORT=cp -fu
 COPY=cp -n
 CREATE=mkdir -p
+REMOVE=rm -rf
 
 all: pre chaos post
 
@@ -21,14 +23,14 @@ chaos: $(OBJS)
 	@$(CC) $(CFLAGS) -o $(BINARY) $^
 
 $(ODIR)%.o: $(SDIR)%.cpp $(SDIR)%.hpp
-	@echo $@
+	@$(PRINT) $@
 	@$(CC) $(CFLAGS) -c -o $@ $<
 
 clean:
-	@rm -rf $(ODIR)chaos.o $(BINARY)
+	@$(REMOVE) $(ODIR)chaos.o $(BINARY)
 
 clean-all:
-	@rm -rf $(OBJS) $(BINARY)
+	@$(REMOVE)$(OBJS) $(BINARY)
 
 pre:
 	@$(CREATE) $(ODIR)
