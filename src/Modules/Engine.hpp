@@ -1,0 +1,31 @@
+#pragma once
+#include "Module.hpp"
+#include "Utils.hpp"
+#include "Variable.hpp"
+
+extern Variable sv_cheats;
+
+class Engine : public Module {
+public:
+    CHostState* hoststate = nullptr;
+
+    using _GetMaxClients = int (*)();
+    using _Cbuf_AddText = void(__cdecl*)(int slot, const char* pText, int nTickDelay);
+#ifdef _WIN32
+    using _GetActiveSplitScreenPlayerSlot = int (*)();
+#else
+    using _GetActiveSplitScreenPlayerSlot = int (*)(void* thisptr);
+#endif
+
+    _GetMaxClients GetMaxClients = nullptr;
+    _GetActiveSplitScreenPlayerSlot GetActiveSplitScreenPlayerSlot = nullptr;
+    _Cbuf_AddText Cbuf_AddText = nullptr;
+
+    Engine();
+    bool Init() override;
+    void Shutdown() override;
+
+    void SendToCommandBuffer(const char* text, int delay = 0);
+};
+
+extern Engine* engine;
