@@ -2,7 +2,13 @@
 #include "Interface.hpp"
 #include "Module.hpp"
 
-#include "Utils/SDK.hpp"
+#include "Utils.hpp"
+
+#ifdef _WIN32
+#define TIER1 "vstdlib"
+#else
+#define TIER1 "libvstdlib"
+#endif
 
 class Tier1 : public Module {
 public:
@@ -21,6 +27,7 @@ public:
     Tier1();
     bool Init() override;
     void Shutdown() override;
+    const char* Name() override { return MODULE(TIER1); }
 };
 
 extern Tier1* tier1;

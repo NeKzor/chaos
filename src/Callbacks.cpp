@@ -243,6 +243,23 @@ CHAOS(NoFriction)
     }
 }
 
+CHAOS(NoPortalFunneling)
+{
+    static Variable sv_player_funnel_into_portals;
+
+    if (!state->initialized) {
+        sv_player_funnel_into_portals = Variable("sv_player_funnel_into_portals");
+        state->initialized = !!sv_player_funnel_into_portals;
+        return;
+    }
+
+    if (lucky) {
+        sv_player_funnel_into_portals.SetValue(0);
+    } else {
+        sv_player_funnel_into_portals.SetValue(1);
+    }
+}
+
 /* CHAOS(MapSkip)
 {
     if (!state->initialized) {

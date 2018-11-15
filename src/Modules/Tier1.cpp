@@ -11,11 +11,7 @@ Tier1::Tier1()
 }
 bool Tier1::Init()
 {
-#if _WIN32
-    this->g_pCVar = Interface::Create(MODULE("vstdlib"), "VEngineCvar0", false);
-#else
-    this->g_pCVar = Interface::Create(MODULE("libvstdlib"), "VEngineCvar0", false);
-#endif
+    this->g_pCVar = Interface::Create(this->Name(), "VEngineCvar0", false);
     if (this->g_pCVar) {
         this->RegisterConCommand = this->g_pCVar->Original<_RegisterConCommand>(Offsets::RegisterConCommand);
         this->UnregisterConCommand = this->g_pCVar->Original<_UnregisterConCommand>(Offsets::UnregisterConCommand);

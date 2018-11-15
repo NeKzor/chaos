@@ -18,6 +18,7 @@ void Modules::ShutdownAll()
 {
     for (const auto& mod : this->list) {
         mod->Shutdown();
+        mod->hasLoaded = false;
     }
 }
 void Modules::DeleteAll()
@@ -25,12 +26,11 @@ void Modules::DeleteAll()
     for (auto& mod : this->list) {
         if (mod) {
             delete mod;
-            mod = nullptr;
         }
     }
 }
 Modules::~Modules()
 {
-    DeleteAll();
+    this->DeleteAll();
     this->list.clear();
 }

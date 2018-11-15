@@ -24,6 +24,7 @@ public:
     Engine();
     bool Init() override;
     void Shutdown() override;
+    const char* Name() override { return MODULE("engine"); }
 
     void SendToCommandBuffer(const char* text, int delay = 0);
 };

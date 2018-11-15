@@ -15,7 +15,7 @@ Engine::Engine()
 }
 bool Engine::Init()
 {
-    if (auto engine = Interface::Create(MODULE("engine"), "VEngineClient0", false)) {
+    if (auto engine = Interface::Create(this->Name(), "VEngineClient0", false)) {
         this->GetMaxClients = engine->Original<_GetMaxClients>(Offsets::GetMaxClients);
         this->GetActiveSplitScreenPlayerSlot = engine->Original<_GetActiveSplitScreenPlayerSlot>(Offsets::GetActiveSplitScreenPlayerSlot);
 
@@ -33,7 +33,6 @@ bool Engine::Init()
     }
 
     sv_cheats = Variable("sv_cheats");
-
     if (!!sv_cheats) {
         sv_cheats.Notify(false);
     }

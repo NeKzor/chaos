@@ -38,6 +38,7 @@ public:
     Console();
     bool Init() override;
     void Shutdown() override;
+    const char* Name() override { return MODULE(TIER0); }
 
     template <typename... T>
     void Print(const char* fmt, T... args)
