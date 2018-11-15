@@ -34,6 +34,10 @@ bool Engine::Init()
 
     sv_cheats = Variable("sv_cheats");
 
+    if (!!sv_cheats) {
+        sv_cheats.Notify(false);
+    }
+
     return this->hasLoaded = this->hoststate
         && this->GetMaxClients
         && this->GetActiveSplitScreenPlayerSlot

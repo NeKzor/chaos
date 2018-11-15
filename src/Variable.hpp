@@ -51,7 +51,8 @@ public:
     void RemoveFlag(int value);
 
     void Unlock(bool asCheat = true);
-    void Lock();
+    void Notify(bool notify);
+    void Restore();
 
     void DisableChange();
     void EnableChange();

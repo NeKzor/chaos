@@ -111,8 +111,8 @@ CHAOS(FPS)
     if (!state->initialized) {
         fps_max = Variable("fps_max");
         fps_max_splitscreen = Variable("fps_max_splitscreen");
-        state->initialized = !!fps_max && !!fps_max_splitscreen;
-        if (state->initialized) {
+
+        if (state->initialized = !!fps_max && !!fps_max_splitscreen) {
             fps_max_default = fps_max.GetInt();
             fps_max_splitscreen_default = fps_max_splitscreen.GetInt();
         }
@@ -163,7 +163,10 @@ CHAOS(Gravity)
 
     if (!state->initialized) {
         sv_gravity = Variable("sv_gravity");
-        state->initialized = !!sv_gravity;
+
+        if (state->initialized = !!sv_gravity) {
+            sv_gravity.Notify(false);
+        }
         return;
     }
 
@@ -217,6 +220,26 @@ CHAOS(NoCrosshair)
         r_drawvgui.SetValue(0);
     } else {
         r_drawvgui.SetValue(1);
+    }
+}
+
+CHAOS(NoFriction)
+{
+    static Variable sv_friction;
+
+    if (!state->initialized) {
+        sv_friction = Variable("sv_friction");
+
+        if (state->initialized = !!sv_friction) {
+            sv_friction.Notify(false);
+        }
+        return;
+    }
+
+    if (lucky) {
+        sv_friction.SetValue(0);
+    } else {
+        sv_friction.SetValue(4);
     }
 }
 

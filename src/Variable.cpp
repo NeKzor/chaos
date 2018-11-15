@@ -155,14 +155,31 @@ void Variable::Unlock(bool asCheat)
             this->AddFlag(FCVAR_CHEAT);
         }
 
+        // Save references in list to restore them later
         if (this->isReference) {
-            this->list.push_back(this);
+            Variable::list.push_back(this);
         }
     }
 }
-void Variable::Lock()
+void Variable::Notify(bool notify)
 {
     if (this->ptr) {
+        this->originalFlags = this->ptr->m_nFlags;
+        if (notify) {
+            this->AddFlag(FCVAR_NOTIFY);
+        } else {
+            this->RemoveFlag(FCVAR_NOTIFY);
+        }
+
+        // Save references in list to restore them later
+        if (this->isReference) {
+            Variable::list.push_back(this);
+        }
+    }
+}
+void Variable::Restore()
+{
+    if (this->ptr && this->originalFlags) {
         this->ptr->m_nFlags = this->originalFlags;
     }
 }
@@ -208,6 +225,9 @@ void Variable::Unregister()
     if (this->isRegistered && !this->isReference) {
         this->isRegistered = false;
         tier1->UnregisterConCommand(tier1->g_pCVar->ThisPtr(), this->ptr);
+    } else if (this->isReference) {
+        // Restore original flags of saved referenced ConVars
+        this->Restore();
     }
 }
 bool Variable::operator!()
