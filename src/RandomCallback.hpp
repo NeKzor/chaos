@@ -24,7 +24,7 @@ public:
     static void ResetAll();
 };
 
-#define CHAOS(name)                                                \
-    void name##_callback(RandomCallback* state, bool lucky);       \
+#define CHAOS(name)                                                       \
+    void name##_callback(RandomCallback* state, bool lucky);              \
     RandomCallback name##_state = RandomCallback(#name, name##_callback); \
     void name##_callback(RandomCallback* state, bool lucky)

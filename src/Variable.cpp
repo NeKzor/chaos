@@ -4,9 +4,9 @@
 
 #include "Modules/Tier1.hpp"
 
+#include "Chaos.hpp"
 #include "Game.hpp"
 #include "Offsets.hpp"
-#include "Chaos.hpp"
 
 Variable::Variable()
     : ptr(nullptr)

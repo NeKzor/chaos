@@ -4,8 +4,8 @@
 
 #include "Modules/Tier1.hpp"
 
-#include "Game.hpp"
 #include "Chaos.hpp"
+#include "Game.hpp"
 
 Command::Command()
     : ptr(nullptr)

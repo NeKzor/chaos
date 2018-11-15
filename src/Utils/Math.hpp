@@ -27,8 +27,8 @@ inline void SinCos(float radians, float* sine, float* cosine)
 #else
     register double __cosr, __sinr;
     __asm("fsincos"
-        : "=t"(__cosr), "=u"(__sinr)
-        : "0"(radians));
+          : "=t"(__cosr), "=u"(__sinr)
+          : "0"(radians));
 
     *sine = __sinr;
     *cosine = __cosr;

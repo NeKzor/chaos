@@ -1,7 +1,7 @@
 #include "Chaos.hpp"
 
-#include <cstring>
 #include <chrono>
+#include <cstring>
 
 #include "Modules/Console.hpp"
 #include "Modules/Engine.hpp"

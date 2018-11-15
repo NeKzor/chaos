@@ -5,9 +5,9 @@
 
 #include "Modules/Module.hpp"
 
+#include "Cheats.hpp"
 #include "Command.hpp"
 #include "Game.hpp"
-#include "Cheats.hpp"
 #include "Plugin.hpp"
 #include "RandomCallback.hpp"
 #include "Utils/SDK.hpp"
