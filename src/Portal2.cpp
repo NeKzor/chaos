@@ -25,13 +25,13 @@ void Portal2::LoadOffsets()
     HostState_OnClientConnected = 684; // CClientState::SetSignonState
     hoststate = 1; // HostState_OnClientConnected
     AutoCompletionFunc = 66; // listdemo_CompletionFunc
-    ClientCommand = 39; // CVEngineServer (TODO)
+    ClientCommand = 39; // CVEngineServer
 
     // client.dll
 
     GetHud = 125; // cc_leaderboard_enable
     FindElement = 135; // cc_leaderboard_enable
-    ChatPrintf = 25; // CBaseHudChat (TODO)
+    ChatPrintf = 22; // CBaseHudChat
 
     // vstdlib.dll
 

@@ -4,7 +4,7 @@
 ## Supported Systems
 
 - Linux
-- Windows (TODO)
+- Windows
 
 ## Commands & Variables
 

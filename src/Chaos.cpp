@@ -52,7 +52,7 @@ bool Chaos::Load(CreateInterfaceFn interfaceFactory, CreateInterfaceFn gameServe
             this->modules->AddModule<Client>(&client);
             this->modules->InitAll();
 
-            if (engine->hasLoaded && client) {
+            if (engine && client) {
                 this->StartMainThread();
 
                 console->PrintActive("Loaded chaos-plugin, Version %s\n", this->Version());

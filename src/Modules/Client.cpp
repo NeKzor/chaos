@@ -1,6 +1,5 @@
 #include "Client.hpp"
 
-#include "Console.hpp"
 #include "Command.hpp"
 #include "Interface.hpp"
 #include "Offsets.hpp"
