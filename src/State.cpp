@@ -3,7 +3,7 @@
 #include <vector>
 
 State::State(const char* name, _StateCallback callback)
-    : initialized(false)
+    : isInitialized(false)
     , name(name)
     , callback(callback)
     , quantity(1)
@@ -12,9 +12,9 @@ State::State(const char* name, _StateCallback callback)
 }
 bool State::Init()
 {
-    this->initialized = false;
+    this->isInitialized = false;
     this->callback(this, false);
-    return this->initialized;
+    return this->isInitialized;
 }
 void State::Dispatch()
 {

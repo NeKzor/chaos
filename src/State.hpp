@@ -8,7 +8,7 @@ using _StateCallback = void (*)(State* state, bool lucky);
 
 class State {
 public:
-    bool initialized;
+    bool isInitialized;
     const char* name;
     _StateCallback callback;
     int quantity;

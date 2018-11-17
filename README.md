@@ -20,7 +20,7 @@
 | chaos_time | 30 | How long a state should last, in seconds.<br>-1 = Random number between chaos_time_lower_bound and chaos_time_upper_bound.<br>Value cannot be lower than 10 seconds. |
 | chaos_time_lower_bound | 30 | See chaos_time. |
 | chaos_time_upper_bound | 40 | See chaos_time. |
-| chaos_cooldown | 0 | Amount of seconds to wait until the next state occurs.<br>-1 = Random number between chaos_cooldown_lower_bound and chaos_cooldown_upper_bound. |
+| chaos_cooldown | 0 | Amount of seconds to wait until next state occurs.<br>-1 = Random number between chaos_cooldown_lower_bound and chaos_cooldown_upper_bound. |
 | chaos_cooldown_lower_bound | 30 | See chaos_cooldown. |
 | chaos_cooldown_upper_bound | 40 | See chaos_cooldown. |
 

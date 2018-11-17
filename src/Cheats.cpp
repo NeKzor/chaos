@@ -21,7 +21,7 @@ Variable chaos_time_lower_bound = Variable("chaos_time_lower_bound", "30",
 Variable chaos_time_upper_bound = Variable("chaos_time_upper_bound", "40",
     "See chaos_time.\n");
 Variable chaos_cooldown = Variable("chaos_cooldown", "0",
-    "Amount of seconds to wait until the next state occurs. "
+    "Amount of seconds to wait until next state occurs. "
     "-1 = Random number between \"chaos_cooldown_lower_bound\" and \"chaos_cooldown_upper_bound\".\n");
 Variable chaos_cooldown_lower_bound = Variable("chaos_cooldown_lower_bound", "30",
     "See chaos_cooldown.\n");
@@ -113,7 +113,7 @@ CON_COMMAND(chaos_states, "Prints all possible states.\n")
     console->Msg("state-name (probability)\n");
     for (const auto& state : State::list) {
         auto probability = ((float)state->quantity / total) * 100;
-        if (!state->initialized) {
+        if (!state->isInitialized) {
             console->Warning("%s (%.2f)\n", state->name, probability);
         } else if (chaos.curState && !std::strcmp(chaos.curState->name, state->name)) {
             console->PrintActive("%s (%.2f)\n", state->name, probability);

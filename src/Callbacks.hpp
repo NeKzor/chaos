@@ -25,3 +25,4 @@ extern State ClosingEyes;
 extern State DemoUi;
 extern State PortalLinkage;
 extern State MansNotHot;
+extern State MotionBlur;

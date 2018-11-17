@@ -9,9 +9,9 @@ CHAOS(LSD)
 {
     static Variable r_drawworld;
 
-    if (!state->initialized) {
+    if (!state->isInitialized) {
         r_drawworld = Variable("r_drawworld");
-        state->initialized = !!r_drawworld;
+        state->isInitialized = !!r_drawworld;
         return;
     }
 
@@ -27,10 +27,10 @@ CHAOS(Epilepsy)
     static Variable r_farz;
     static Variable gl_clear_randomcolor;
 
-    if (!state->initialized) {
+    if (!state->isInitialized) {
         r_farz = Variable("r_farz");
         gl_clear_randomcolor = Variable("gl_clear_randomcolor");
-        state->initialized = !!r_farz && !!gl_clear_randomcolor;
+        state->isInitialized = !!r_farz && !!gl_clear_randomcolor;
         return;
     }
 
@@ -47,9 +47,9 @@ CHAOS(PPNF)
 {
     static Variable sv_portal_placement_never_fail;
 
-    if (!state->initialized) {
+    if (!state->isInitialized) {
         sv_portal_placement_never_fail = Variable("sv_portal_placement_never_fail");
-        state->initialized = !!sv_portal_placement_never_fail;
+        state->isInitialized = !!sv_portal_placement_never_fail;
         return;
     }
 
@@ -62,8 +62,8 @@ CHAOS(PPNF)
 
 CHAOS(ThirdPerson)
 {
-    if (!state->initialized) {
-        state->initialized = true;
+    if (!state->isInitialized) {
+        state->isInitialized = true;
         return;
     }
 
@@ -76,8 +76,8 @@ CHAOS(ThirdPerson)
 
 CHAOS(PropSpawning)
 {
-    if (!state->initialized) {
-        state->initialized = true;
+    if (!state->isInitialized) {
+        state->isInitialized = true;
         return;
     }
 
@@ -90,8 +90,8 @@ CHAOS(PropSpawning)
 
 CHAOS(EnergyBall)
 {
-    if (!state->initialized) {
-        state->initialized = true;
+    if (!state->isInitialized) {
+        state->isInitialized = true;
         return;
     }
 
@@ -104,9 +104,9 @@ CHAOS(TimeScale)
 {
     static Variable host_timescale;
 
-    if (!state->initialized) {
+    if (!state->isInitialized) {
         host_timescale = Variable("host_timescale");
-        state->initialized = !!host_timescale;
+        state->isInitialized = !!host_timescale;
         return;
     }
 
@@ -124,11 +124,11 @@ CHAOS(FPS)
     static int fps_max_default;
     static int fps_max_splitscreen_default;
 
-    if (!state->initialized) {
+    if (!state->isInitialized) {
         fps_max = Variable("fps_max");
         fps_max_splitscreen = Variable("fps_max_splitscreen");
 
-        if (state->initialized = !!fps_max && !!fps_max_splitscreen) {
+        if (state->isInitialized = !!fps_max && !!fps_max_splitscreen) {
             fps_max_default = fps_max.GetInt();
             fps_max_splitscreen_default = fps_max_splitscreen.GetInt();
         }
@@ -148,9 +148,9 @@ CHAOS(FireDelay)
 {
     static Variable portalgun_fire_delay;
 
-    if (!state->initialized) {
+    if (!state->isInitialized) {
         portalgun_fire_delay = Variable("portalgun_fire_delay");
-        state->initialized = !!portalgun_fire_delay;
+        state->isInitialized = !!portalgun_fire_delay;
         return;
     }
 
@@ -163,8 +163,8 @@ CHAOS(FireDelay)
 
 CHAOS(PortalResize)
 {
-    if (!state->initialized) {
-        state->initialized = true;
+    if (!state->isInitialized) {
+        state->isInitialized = true;
         return;
     }
 
@@ -177,10 +177,10 @@ CHAOS(Gravity)
 {
     static Variable sv_gravity;
 
-    if (!state->initialized) {
+    if (!state->isInitialized) {
         sv_gravity = Variable("sv_gravity");
 
-        if (state->initialized = !!sv_gravity) {
+        if (state->isInitialized = !!sv_gravity) {
             sv_gravity.Notify(false);
         }
         return;
@@ -197,9 +197,9 @@ CHAOS(FakeLag)
 {
     static Variable net_fakelag;
 
-    if (!state->initialized) {
+    if (!state->isInitialized) {
         net_fakelag = Variable("net_fakelag");
-        state->initialized = !!net_fakelag;
+        state->isInitialized = !!net_fakelag;
         return;
     }
 
@@ -212,8 +212,8 @@ CHAOS(FakeLag)
 
 CHAOS(DualGun)
 {
-    if (!state->initialized) {
-        state->initialized = true;
+    if (!state->isInitialized) {
+        state->isInitialized = true;
         return;
     }
 
@@ -226,9 +226,9 @@ CHAOS(DualGun)
 CHAOS(NoCrosshair)
 {
     static Variable r_drawvgui;
-    if (!state->initialized) {
+    if (!state->isInitialized) {
         r_drawvgui = Variable("r_drawvgui");
-        state->initialized = !!r_drawvgui;
+        state->isInitialized = !!r_drawvgui;
         return;
     }
 
@@ -243,10 +243,10 @@ CHAOS(NoFriction)
 {
     static Variable sv_friction;
 
-    if (!state->initialized) {
+    if (!state->isInitialized) {
         sv_friction = Variable("sv_friction");
 
-        if (state->initialized = !!sv_friction) {
+        if (state->isInitialized = !!sv_friction) {
             sv_friction.Notify(false);
         }
         return;
@@ -263,10 +263,10 @@ CHAOS(NegativeFriction)
 {
     static Variable sv_friction;
 
-    if (!state->initialized) {
+    if (!state->isInitialized) {
         sv_friction = Variable("sv_friction");
 
-        if (state->initialized = !!sv_friction) {
+        if (state->isInitialized = !!sv_friction) {
             sv_friction.Notify(false);
         }
         return;
@@ -284,10 +284,10 @@ CHAOS(NoPortalFunneling)
     static Variable sv_player_funnel_into_portals;
     static Variable sv_props_funnel_into_portals;
 
-    if (!state->initialized) {
+    if (!state->isInitialized) {
         sv_player_funnel_into_portals = Variable("sv_player_funnel_into_portals");
         sv_props_funnel_into_portals = Variable("sv_props_funnel_into_portals");
-        state->initialized = !!sv_player_funnel_into_portals && !!sv_props_funnel_into_portals;
+        state->isInitialized = !!sv_player_funnel_into_portals && !!sv_props_funnel_into_portals;
         return;
     }
 
@@ -304,9 +304,9 @@ CHAOS(PhysTimescale)
 {
     static Variable phys_timescale;
 
-    if (!state->initialized) {
+    if (!state->isInitialized) {
         phys_timescale = Variable("phys_timescale");
-        state->initialized = !!phys_timescale;
+        state->isInitialized = !!phys_timescale;
         return;
     }
 
@@ -321,9 +321,9 @@ CHAOS(NotSoFastOkay)
 {
     static Variable sv_maxvelocity;
 
-    if (!state->initialized) {
+    if (!state->isInitialized) {
         sv_maxvelocity = Variable("sv_maxvelocity");
-        state->initialized = !!sv_maxvelocity;
+        state->isInitialized = !!sv_maxvelocity;
         return;
     }
 
@@ -345,7 +345,7 @@ CHAOS(RoutingGod)
     static Variable contimes;
     static Variable con_notifytime;
 
-    if (!state->initialized) {
+    if (!state->isInitialized) {
         r_drawclipbrushes = Variable("r_drawclipbrushes");
         vcollide_wireframe = Variable("vcollide_wireframe");
         phys_show_active = Variable("phys_show_active");
@@ -354,7 +354,7 @@ CHAOS(RoutingGod)
         developer = Variable("developer");
         contimes = Variable("contimes");
         con_notifytime = Variable("con_notifytime");
-        state->initialized = !!r_drawclipbrushes
+        state->isInitialized = !!r_drawclipbrushes
             && !!vcollide_wireframe
             && !!phys_show_active
             && !!sv_debug_player_use
@@ -390,8 +390,8 @@ CHAOS(RoutingGod)
 
 CHAOS(ClosingEyes)
 {
-    if (!state->initialized) {
-        state->initialized = true;
+    if (!state->isInitialized) {
+        state->isInitialized = true;
         return;
     }
 
@@ -404,8 +404,8 @@ CHAOS(ClosingEyes)
 
 CHAOS(DemoUi)
 {
-    if (!state->initialized) {
-        state->initialized = true;
+    if (!state->isInitialized) {
+        state->isInitialized = true;
         return;
     }
 
@@ -417,8 +417,8 @@ CHAOS(DemoUi)
 
 CHAOS(PortalLinkage)
 {
-    if (!state->initialized) {
-        state->initialized = true;
+    if (!state->isInitialized) {
+        state->isInitialized = true;
         return;
     }
 
@@ -431,8 +431,8 @@ CHAOS(PortalLinkage)
 
 CHAOS(MapSkip)
 {
-    if (!state->initialized) {
-        state->initialized = true;
+    if (!state->isInitialized) {
+        state->isInitialized = true;
         return;
     }
 
@@ -443,8 +443,8 @@ CHAOS(MapSkip)
 
 CHAOS(MansNotHot)
 {
-    if (!state->initialized) {
-        state->initialized = true;
+    if (!state->isInitialized) {
+        state->isInitialized = true;
         return;
     }
 
@@ -455,10 +455,50 @@ CHAOS(MansNotHot)
     }
 }
 
+CHAOS(MotionBlur)
+{
+    static Variable mat_motion_blur_enabled;
+    static Variable mat_motion_blur_falling_min;
+    static Variable mat_motion_blur_percent_of_screen_max;
+    static Variable mat_motion_blur_strength;
+    static int default_mat_motion_blur_enabled;
+    static float default_mat_motion_blur_falling_min;
+    static float default_mat_motion_blur_percent_of_screen_max;
+    static float default_mat_motion_blur_strength;
+
+    if (!state->isInitialized) {
+        mat_motion_blur_enabled = Variable("mat_motion_blur_enabled");
+        mat_motion_blur_falling_min = Variable("mat_motion_blur_falling_min");
+        mat_motion_blur_percent_of_screen_max = Variable("mat_motion_blur_percent_of_screen_max");
+        mat_motion_blur_strength = Variable("mat_motion_blur_strength");
+        if (state->isInitialized = !!mat_motion_blur_enabled
+                && !!mat_motion_blur_falling_min
+                && !!mat_motion_blur_percent_of_screen_max
+                && !!mat_motion_blur_strength) {
+            default_mat_motion_blur_enabled = mat_motion_blur_enabled.GetInt();
+            default_mat_motion_blur_falling_min = mat_motion_blur_falling_min.GetFloat();
+            default_mat_motion_blur_percent_of_screen_max = mat_motion_blur_percent_of_screen_max.GetFloat();
+            default_mat_motion_blur_strength = mat_motion_blur_strength.GetFloat();
+        }
+    }
+
+    if (lucky) {
+        mat_motion_blur_enabled.SetValue(1);
+        mat_motion_blur_falling_min.SetValue(999);
+        mat_motion_blur_percent_of_screen_max.SetValue(100.0f);
+        mat_motion_blur_strength.SetValue(999);
+    } else {
+        mat_motion_blur_enabled.SetValue(default_mat_motion_blur_enabled);
+        mat_motion_blur_falling_min.SetValue(default_mat_motion_blur_falling_min);
+        mat_motion_blur_percent_of_screen_max.SetValue(default_mat_motion_blur_percent_of_screen_max);
+        mat_motion_blur_strength.SetValue(default_mat_motion_blur_strength);
+    }
+}
+
 /* CHAOS(RipSettings)
 {
-    if (!state->initialized) {
-        state->initialized = true;
+    if (!state->isInitialized) {
+        state->isInitialized = true;
         return;
     }
 
