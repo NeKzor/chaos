@@ -1,28 +1,44 @@
 #include "Callbacks.hpp"
 
-#include "Modules/Engine.hpp"
-
+#include "Chaos.hpp"
 #include "Command.hpp"
-#include "RandomCallback.hpp"
+#include "State.hpp"
 #include "Variable.hpp"
 
 CHAOS(LSD)
 {
     static Variable r_drawworld;
-    static Variable gl_clear_randomcolor;
 
     if (!state->initialized) {
         r_drawworld = Variable("r_drawworld");
-        gl_clear_randomcolor = Variable("gl_clear_randomcolor");
-        state->initialized = !!r_drawworld && !!gl_clear_randomcolor;
+        state->initialized = !!r_drawworld;
         return;
     }
 
     if (lucky) {
         r_drawworld.SetValue(0);
-        gl_clear_randomcolor.SetValue(1);
     } else {
         r_drawworld.SetValue(1);
+    }
+}
+
+CHAOS(Epilepsy)
+{
+    static Variable r_farz;
+    static Variable gl_clear_randomcolor;
+
+    if (!state->initialized) {
+        r_farz = Variable("r_farz");
+        gl_clear_randomcolor = Variable("gl_clear_randomcolor");
+        state->initialized = !!r_farz && !!gl_clear_randomcolor;
+        return;
+    }
+
+    if (lucky) {
+        r_farz.SetValue(128);
+        gl_clear_randomcolor.SetValue(1);
+    } else {
+        r_farz.SetValue(-1);
         gl_clear_randomcolor.SetValue(0);
     }
 }
@@ -52,9 +68,9 @@ CHAOS(ThirdPerson)
     }
 
     if (lucky) {
-        engine->SendToCommandBuffer("thirdperson");
+        chaos.EachClient("thirdperson");
     } else {
-        engine->SendToCommandBuffer("firstperson");
+        chaos.EachClient("firstperson");
     }
 }
 
@@ -66,9 +82,9 @@ CHAOS(PropSpawning)
     }
 
     if (lucky) {
-        engine->SendToCommandBuffer("ent_create portal_weighted_cube");
-        engine->SendToCommandBuffer("npc_create npc_portal_turret_floor", 60);
-        engine->SendToCommandBuffer("ent_create prop_button", 120);
+        chaos.EachClient("ent_create_portal_weighted_cube");
+        chaos.EachClient("npc_create npc_portal_turret_floor", 60);
+        chaos.EachClient("ent_create prop_button", 120);
     }
 }
 
@@ -80,7 +96,7 @@ CHAOS(EnergyBall)
     }
 
     if (lucky) {
-        engine->SendToCommandBuffer("fire_energy_ball");
+        chaos.EachClient("fire_energy_ball");
     }
 }
 
@@ -153,7 +169,7 @@ CHAOS(PortalResize)
     }
 
     if (lucky) {
-        engine->SendToCommandBuffer("Portals_ResizeAll 20 50");
+        chaos.BufferCommand("Portals_ResizeAll 20 50");
     }
 }
 
@@ -202,8 +218,8 @@ CHAOS(DualGun)
     }
 
     if (lucky) {
-        engine->SendToCommandBuffer("give_portalgun");
-        engine->SendToCommandBuffer("upgrade_portalgun");
+        chaos.EachClient("give_portalgun");
+        chaos.EachClient("upgrade_portalgun");
     }
 }
 
@@ -243,50 +259,136 @@ CHAOS(NoFriction)
     }
 }
 
+CHAOS(NegativeFriction)
+{
+    static Variable sv_friction;
+
+    if (!state->initialized) {
+        sv_friction = Variable("sv_friction");
+
+        if (state->initialized = !!sv_friction) {
+            sv_friction.Notify(false);
+        }
+        return;
+    }
+
+    if (lucky) {
+        sv_friction.SetValue(-4);
+    } else {
+        sv_friction.SetValue(4);
+    }
+}
+
 CHAOS(NoPortalFunneling)
 {
     static Variable sv_player_funnel_into_portals;
+    static Variable sv_props_funnel_into_portals;
 
     if (!state->initialized) {
         sv_player_funnel_into_portals = Variable("sv_player_funnel_into_portals");
-        state->initialized = !!sv_player_funnel_into_portals;
+        sv_props_funnel_into_portals = Variable("sv_props_funnel_into_portals");
+        state->initialized = !!sv_player_funnel_into_portals && !!sv_props_funnel_into_portals;
         return;
     }
 
     if (lucky) {
         sv_player_funnel_into_portals.SetValue(0);
+        sv_props_funnel_into_portals.SetValue(0);
     } else {
         sv_player_funnel_into_portals.SetValue(1);
+        sv_props_funnel_into_portals.SetValue(1);
     }
 }
 
-/* CHAOS(MapSkip)
+CHAOS(PhysTimescale)
 {
+    static Variable phys_timescale;
+
     if (!state->initialized) {
-        state->initialized = true;
+        phys_timescale = Variable("phys_timescale");
+        state->initialized = !!phys_timescale;
         return;
     }
 
     if (lucky) {
-        engine->SendToCommandBuffer("transition_map");
-    }
-} */
-
-/* CHAOS(FOV)
-{
-    if (!state->initialized) {
-        state->initialized = true;
-        return;
-    }
-
-    if (lucky) {
-        //cl_fov 200
+        phys_timescale.SetValue(0.2f);
     } else {
-        //cl_fov 90
+        phys_timescale.SetValue(1);
     }
-} */
+}
 
-/* CHAOS(MapRestart)
+CHAOS(NotSoFastOkay)
+{
+    static Variable sv_maxvelocity;
+
+    if (!state->initialized) {
+        sv_maxvelocity = Variable("sv_maxvelocity");
+        state->initialized = !!sv_maxvelocity;
+        return;
+    }
+
+    if (lucky) {
+        sv_maxvelocity.SetValue(250);
+    } else {
+        sv_maxvelocity.SetValue(3500);
+    }
+}
+
+CHAOS(RoutingGod)
+{
+    static Variable r_drawclipbrushes;
+    static Variable vcollide_wireframe;
+    static Variable phys_show_active;
+    static Variable sv_debug_player_use;
+    static Variable sv_showhitboxes;
+    static Variable developer;
+    static Variable contimes;
+    static Variable con_notifytime;
+
+    if (!state->initialized) {
+        r_drawclipbrushes = Variable("r_drawclipbrushes");
+        vcollide_wireframe = Variable("vcollide_wireframe");
+        phys_show_active = Variable("phys_show_active");
+        sv_debug_player_use = Variable("sv_debug_player_use");
+        sv_showhitboxes = Variable("sv_showhitboxes");
+        developer = Variable("developer");
+        contimes = Variable("contimes");
+        con_notifytime = Variable("con_notifytime");
+        state->initialized = !!r_drawclipbrushes
+            && !!vcollide_wireframe
+            && !!phys_show_active
+            && !!sv_debug_player_use
+            && !!sv_showhitboxes
+            && !!developer
+            && !!contimes
+            && !!con_notifytime;
+        return;
+    }
+
+    if (lucky) {
+        r_drawclipbrushes.SetValue(2);
+        vcollide_wireframe.SetValue(1);
+        phys_show_active.SetValue(1);
+        sv_debug_player_use.SetValue(1);
+        sv_showhitboxes.SetValue(1);
+        developer.SetValue(2);
+        contimes.SetValue(64);
+        con_notifytime.SetValue(999);
+        //chaos.EachClient("developer 2");
+    } else {
+        r_drawclipbrushes.SetValue(0);
+        vcollide_wireframe.SetValue(0);
+        phys_show_active.SetValue(0);
+        sv_debug_player_use.SetValue(0);
+        sv_showhitboxes.SetValue(0);
+        developer.SetValue(0);
+        contimes.SetValue(8);
+        con_notifytime.SetValue(8);
+        //chaos.EachClient("developer 0");
+    }
+}
+
+CHAOS(ClosingEyes)
 {
     if (!state->initialized) {
         state->initialized = true;
@@ -294,9 +396,64 @@ CHAOS(NoPortalFunneling)
     }
 
     if (lucky) {
-        engine->SendToCommandBuffer("restart_level");
+        chaos.EachClient("fadeout %i 0 0 0 255", std::max(chaos_time.GetInt(), 10));
+    } else {
+        chaos.EachClient("fadein");
     }
-} */
+}
+
+CHAOS(DemoUi)
+{
+    if (!state->initialized) {
+        state->initialized = true;
+        return;
+    }
+
+    if (lucky) {
+        chaos.EachClient("demoui");
+        chaos.EachClient("demoui2");
+    }
+}
+
+CHAOS(PortalLinkage)
+{
+    if (!state->initialized) {
+        state->initialized = true;
+        return;
+    }
+
+    if (lucky) {
+        chaos.EachClient("change_portalgun_linkage_id 1");
+    } else {
+        chaos.EachClient("change_portalgun_linkage_id 0");
+    }
+}
+
+CHAOS(MapSkip)
+{
+    if (!state->initialized) {
+        state->initialized = true;
+        return;
+    }
+
+    if (lucky) {
+        chaos.BufferCommand("transition_map");
+    }
+}
+
+CHAOS(MansNotHot)
+{
+    if (!state->initialized) {
+        state->initialized = true;
+        return;
+    }
+
+    if (lucky) {
+        chaos.EachClient("ent_fire !self ignite");
+    } else {
+        chaos.EachClient("ent_fire !self igniteifetime 0");
+    }
+}
 
 /* CHAOS(RipSettings)
 {
@@ -306,7 +463,7 @@ CHAOS(NoPortalFunneling)
     }
 
     if (lucky) {
-        engine->SendToCommandBuffer("unbindall");
-        engine->SendToCommandBuffer("sensitivity 13");
+        chaos.BufferCommand("unbindall");
+        chaos.BufferCommand("sensitivity 13");
     }
 } */

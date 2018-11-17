@@ -32,6 +32,10 @@ bool Engine::Init()
         Memory::Read<_Cbuf_AddText>(ClientCmd + Offsets::Cbuf_AddText, &this->Cbuf_AddText);
     }
 
+    if (auto g_VEngineServer = Interface::Create(this->Name(), "VEngineServer0")) {
+        this->ClientCommand = g_VEngineServer->Original<_ClientCommand>(Offsets::ClientCommand);
+    }
+
     sv_cheats = Variable("sv_cheats");
     if (!!sv_cheats) {
         sv_cheats.Notify(false);
@@ -41,19 +45,11 @@ bool Engine::Init()
         && this->GetMaxClients
         && this->GetActiveSplitScreenPlayerSlot
         && this->Cbuf_AddText
+        && this->ClientCommand
         && !!sv_cheats;
 }
 void Engine::Shutdown()
 {
-}
-void Engine::SendToCommandBuffer(const char* text, int delay)
-{
-#ifdef _WIN32
-    auto slot = this->GetActiveSplitScreenPlayerSlot();
-#else
-    auto slot = this->GetActiveSplitScreenPlayerSlot(nullptr);
-#endif
-    this->Cbuf_AddText(slot, text, delay);
 }
 
 Engine* engine;

@@ -30,6 +30,9 @@ int IsPlayingBack;
 // CEngineTool
 int GetCurrentMap;
 
+// CVEngineServer
+int ClientCommand;
+
 // Others
 int GetClientStateFunction;
 int cl;

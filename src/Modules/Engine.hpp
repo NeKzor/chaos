@@ -16,17 +16,17 @@ public:
 #else
     using _GetActiveSplitScreenPlayerSlot = int (*)(void* thisptr);
 #endif
+     using _ClientCommand = int(__func*)(void* thisptr, void* pEdict, const char* szFmt, ...);
 
     _GetMaxClients GetMaxClients = nullptr;
     _GetActiveSplitScreenPlayerSlot GetActiveSplitScreenPlayerSlot = nullptr;
     _Cbuf_AddText Cbuf_AddText = nullptr;
+    _ClientCommand ClientCommand = nullptr;
 
     Engine();
     bool Init() override;
     void Shutdown() override;
     const char* Name() override { return MODULE("engine"); }
-
-    void SendToCommandBuffer(const char* text, int delay = 0);
 };
 
 extern Engine* engine;

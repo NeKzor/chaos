@@ -9,7 +9,7 @@
 #include "Command.hpp"
 #include "Game.hpp"
 #include "Plugin.hpp"
-#include "RandomCallback.hpp"
+#include "State.hpp"
 #include "Utils/SDK.hpp"
 
 #define CHAOS_VERSION "1.0"
@@ -35,14 +35,16 @@ public:
     Modules* modules;
     Cheats* cheats;
 
-    RandomCallback* curCallback;
-    std::vector<RandomCallback*> callbacks;
+    State* curState;
+    std::vector<State*> queue;
 
     ChaosMode mode;
     std::atomic<bool> isRunning;
+    unsigned int seed;
+    bool cooldown;
+    std::vector<void*> clients;
 
 private:
-    std::thread pluginThread;
     std::thread mainThread;
     std::atomic<bool> mainIsRunning;
 
@@ -75,15 +77,18 @@ public:
     const char* Build() { return CHAOS_BUILD; }
     const char* Website() { return CHAOS_WEB; }
 
-    bool GetPlugin();
+    void BufferCommand(const char* text, int delay = 0);
+    void EachClient(const char* fmt, ...);
     void Cleanup();
 
     void Start();
     void Stop();
     void Reset();
+    void SetSeed(const int seed);
+    const int GetDelay();
+    void Run();
 
 private:
-    void StartPluginThread();
     void StartMainThread();
 };
 

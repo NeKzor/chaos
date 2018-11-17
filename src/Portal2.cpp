@@ -34,6 +34,7 @@ void Portal2::LoadOffsets()
     GetCurrentMap = 25; // CEngineTool
     m_szLevelName = 36; // CEngineTool::GetCurrentMap
     Cbuf_AddText = 46; // CEngineClient::ClientCmd
+    ClientCommand = 39; // CVEngineServer (TODO)
 
     // vstdlib.dll
 
@@ -64,6 +65,7 @@ void Portal2::LoadOffsets()
     GetCurrentMap = 26; // CEngineTool
     m_szLevelName = 72; // CEngineTool::GetCurrentMap
     Cbuf_AddText = 45; // CEngineClient::ClientCmd
+    ClientCommand = 39; // CVEngineServer
 
     // libvstdlib.so
 
