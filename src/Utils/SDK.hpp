@@ -74,6 +74,15 @@ struct Color {
     unsigned char _color[4];
 };
 
+enum TextColor {
+    COLOR_NORMAL = 1, // 255, 178.5, 0.0, 255
+    COLOR_USEOLDCOLORS = 2, // 255, 178.5, 0.0, 255
+    COLOR_PLAYERNAME = 3, // 204, 204, 204, 255
+    COLOR_LOCATION = 4, // 153, 255, 153, 255
+    COLOR_ACHIEVEMENT = 5, // 64, 255, 64, 255
+    COLOR_MAX
+};
+
 #define FCVAR_DEVELOPMENTONLY (1 << 1)
 #define FCVAR_HIDDEN (1 << 4)
 #define FCVAR_NOTIFY (1 << 8)

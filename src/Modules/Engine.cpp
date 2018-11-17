@@ -1,7 +1,5 @@
 #include "Engine.hpp"
 
-#include "Console.hpp"
-
 #include "Interface.hpp"
 #include "Offsets.hpp"
 #include "Utils.hpp"
@@ -31,7 +29,7 @@ bool Engine::Init()
         Memory::Read<_Cbuf_AddText>(ClientCmd + Offsets::Cbuf_AddText, &this->Cbuf_AddText);
     }
 
-    if (auto g_VEngineServer = Interface::Create(this->Name(), "VEngineServer0")) {
+    if (auto g_VEngineServer = Interface::Create(this->Name(), "VEngineServer0", false)) {
         this->ClientCommand = g_VEngineServer->Original<_ClientCommand>(Offsets::ClientCommand);
     }
 

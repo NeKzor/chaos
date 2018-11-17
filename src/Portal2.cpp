@@ -27,6 +27,12 @@ void Portal2::LoadOffsets()
     AutoCompletionFunc = 66; // listdemo_CompletionFunc
     ClientCommand = 39; // CVEngineServer (TODO)
 
+    // client.dll
+
+    GetHud = 125; // cc_leaderboard_enable
+    FindElement = 135; // cc_leaderboard_enable
+    ChatPrintf = 25; // CBaseHudChat (TODO)
+
     // vstdlib.dll
 
     RegisterConCommand = 9; // CCVar
@@ -48,6 +54,12 @@ void Portal2::LoadOffsets()
     hoststate = 9; // HostState_OnClientConnected
     AutoCompletionFunc = 37; // listdemo_CompletionFunc
     ClientCommand = 39; // CVEngineServer
+
+    // client.so
+
+    GetHud = 104; // cc_leaderboard_enable
+    FindElement = 120; // cc_leaderboard_enable
+    ChatPrintf = 25; // CBaseHudChat
 
     // libvstdlib.so
 

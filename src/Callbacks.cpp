@@ -451,7 +451,7 @@ CHAOS(MansNotHot)
     if (lucky) {
         chaos.EachClient("ent_fire !self ignite");
     } else {
-        chaos.EachClient("ent_fire !self igniteifetime 0");
+        chaos.EachClient("ent_fire !self ignitelifetime 0");
     }
 }
 

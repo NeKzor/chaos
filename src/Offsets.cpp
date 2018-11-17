@@ -23,6 +23,9 @@ int SetSignonState;
 // CVEngineServer
 int ClientCommand;
 
+// CBaseHudChat
+int ChatPrintf;
+
 // Others
 int GetClientStateFunction;
 int cl;
@@ -30,4 +33,6 @@ int AutoCompletionFunc;
 int HostState_OnClientConnected;
 int hoststate;
 int Cbuf_AddText;
+int GetHud;
+int FindElement;
 }

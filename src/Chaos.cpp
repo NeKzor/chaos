@@ -4,6 +4,7 @@
 #include <cstring>
 #include <stdarg.h>
 
+#include "Modules/Client.hpp"
 #include "Modules/Console.hpp"
 #include "Modules/Engine.hpp"
 #include "Modules/Module.hpp"
@@ -48,15 +49,16 @@ bool Chaos::Load(CreateInterfaceFn interfaceFactory, CreateInterfaceFn gameServe
             this->cheats->Init();
 
             this->modules->AddModule<Engine>(&engine);
+            this->modules->AddModule<Client>(&client);
             this->modules->InitAll();
 
-            if (engine->hasLoaded) {
+            if (engine->hasLoaded && client) {
                 this->StartMainThread();
 
                 console->PrintActive("Loaded chaos-plugin, Version %s\n", this->Version());
                 return true;
             } else {
-                console->Warning("chaos: Failed to load engine module!\n");
+                console->Warning("chaos: Failed to load engine and client modules!\n");
             }
         } else {
             console->Warning("chaos: Failed to load tier1 module!\n");
@@ -108,6 +110,16 @@ void Chaos::EachClient(const char* fmt, ...)
     for (const auto& client : this->clients) {
         engine->ClientCommand(nullptr, client, data);
     }
+}
+void Chaos::Chat(const char* fmt, ...)
+{
+    va_list argptr;
+    va_start(argptr, fmt);
+    char data[1024];
+    vsnprintf(data, sizeof(data), fmt, argptr);
+    va_end(argptr);
+
+    client->ChatPrintf(client->g_HudChat->ThisPtr(), 0, 0, "%c%s", TextColor::COLOR_LOCATION, data);
 }
 void Chaos::Cleanup()
 {
@@ -219,7 +231,11 @@ void Chaos::Run()
     auto index = std::rand() % this->queue.size();
     this->curState = this->queue.at(index);
     this->curState->Dispatch();
-    console->Print("%s\n", this->curState->name);
+    console->DevMsg("chaos: %s\n", this->curState->name);
+
+    if (chaos_spoiler.GetBool()) {
+        chaos.Chat("%s", this->curState->name);
+    }
 
     // Handle mode again
     if (mode > 0) {

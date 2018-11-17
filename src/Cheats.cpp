@@ -27,6 +27,7 @@ Variable chaos_cooldown_lower_bound = Variable("chaos_cooldown_lower_bound", "30
     "See chaos_cooldown.\n");
 Variable chaos_cooldown_upper_bound = Variable("chaos_cooldown_upper_bound", "40",
     "See chaos_cooldown.\n");
+Variable chaos_spoiler = Variable("chaos_spoiler", "0", "Prints name of current state into chat.\n");
 
 void Cheats::Init()
 {

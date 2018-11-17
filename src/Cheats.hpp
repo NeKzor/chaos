@@ -15,6 +15,7 @@ extern Variable chaos_time_upper_bound;
 extern Variable chaos_cooldown;
 extern Variable chaos_cooldown_lower_bound;
 extern Variable chaos_cooldown_upper_bound;
+extern Variable chaos_spoiler;
 
 extern Command chaos_start;
 extern Command chaos_stop;

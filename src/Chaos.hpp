@@ -79,6 +79,7 @@ public:
 
     void BufferCommand(const char* text, int delay = 0);
     void EachClient(const char* fmt, ...);
+    void Chat(const char* fmt, ...);
     void Cleanup();
 
     void Start();
