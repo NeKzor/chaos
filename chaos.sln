@@ -9,13 +9,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	ProjectSection(SolutionItems) = preProject
 		.gitattributes = .gitattributes
 		.gitignore = .gitignore
-		addons\chaos.vdf = addons\chaos.vdf
 		README.md = README.md
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "addons", "addons", "{F7F614FD-74E9-4B39-90AF-A76A9ED75207}"
-	ProjectSection(SolutionItems) = preProject
-		addons\chaos.vdf = addons\chaos.vdf
 	EndProjectSection
 EndProject
 Global
@@ -37,9 +31,6 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(NestedProjects) = preSolution
-		{F7F614FD-74E9-4B39-90AF-A76A9ED75207} = {48BE78A6-2CEE-4128-8B30-E22A7F324D88}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {72179AA4-76DD-4073-9796-52F198ECBFCF}
