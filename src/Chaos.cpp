@@ -213,8 +213,8 @@ void Chaos::Run()
     }
 
     // Dispatch random state
-    static int index = 0;
-    //auto index = std::rand() % this->queue.size();
+    /* static int index = 0; */
+    auto index = std::rand() % this->queue.size();
     this->curState = this->queue.at(index);
     this->curState->Dispatch();
     console->Print("%s\n", this->curState->name);
@@ -224,9 +224,9 @@ void Chaos::Run()
         this->queue.erase(this->queue.begin() + index);
     }
 
-    if (++index >= (int)this->queue.size()) {
+    /* if (++index >= (int)this->queue.size()) {
         index = 0;
-    }
+    } */
 }
 
 // Main loop
