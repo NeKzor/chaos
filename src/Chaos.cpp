@@ -31,6 +31,7 @@ Chaos::Chaos()
     this->clients = std::vector<void*>();
 }
 
+// Used callbacks
 bool Chaos::Load(CreateInterfaceFn interfaceFactory, CreateInterfaceFn gameServerFactory)
 {
     console = new Console();
@@ -86,6 +87,7 @@ void Chaos::ClientFullyConnect(void* pEdict)
     this->clients.push_back(pEdict);
 }
 
+// Utilities
 void Chaos::BufferCommand(const char* text, int delay)
 {
 #ifdef _WIN32
@@ -130,6 +132,7 @@ void Chaos::Cleanup()
     SAFE_UNLOAD(console);
 }
 
+// Controls
 void Chaos::Start()
 {
     this->isRunning = true;
@@ -213,7 +216,6 @@ void Chaos::Run()
     }
 
     // Dispatch random state
-    /* static int index = 0; */
     auto index = std::rand() % this->queue.size();
     this->curState = this->queue.at(index);
     this->curState->Dispatch();
@@ -223,10 +225,6 @@ void Chaos::Run()
     if (mode > 0) {
         this->queue.erase(this->queue.begin() + index);
     }
-
-    /* if (++index >= (int)this->queue.size()) {
-        index = 0;
-    } */
 }
 
 // Main loop

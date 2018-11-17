@@ -16,7 +16,6 @@ Engine::Engine()
 bool Engine::Init()
 {
     if (auto engine = Interface::Create(this->Name(), "VEngineClient0", false)) {
-        this->GetMaxClients = engine->Original<_GetMaxClients>(Offsets::GetMaxClients);
         this->GetActiveSplitScreenPlayerSlot = engine->Original<_GetActiveSplitScreenPlayerSlot>(Offsets::GetActiveSplitScreenPlayerSlot);
 
         typedef void* (*_GetClientState)();
@@ -42,7 +41,6 @@ bool Engine::Init()
     }
 
     return this->hasLoaded = this->hoststate
-        && this->GetMaxClients
         && this->GetActiveSplitScreenPlayerSlot
         && this->Cbuf_AddText
         && this->ClientCommand

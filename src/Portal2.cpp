@@ -19,21 +19,12 @@ void Portal2::LoadOffsets()
     InternalSetIntValue = 14; // ConVar
     ClientCmd = 7; // CEngineClient
     GetClientStateFunction = 4; // CEngineClient::ClientCmd
-    GetMaxClients = 20; // CEngineClient
-    GetGameDirectory = 35; // CEngineClient
+    Cbuf_AddText = 46; // CEngineClient::ClientCmd
     GetActiveSplitScreenPlayerSlot = 127; // CEngineClient
-    IsInCommentaryMode = 171; // CEngineClient
+    SetSignonState = 15; // CClientState
     HostState_OnClientConnected = 684; // CClientState::SetSignonState
     hoststate = 1; // HostState_OnClientConnected
-    Disconnect = 16; //  CClientState
-    demoplayer = 74; // CClientState::Disconnect
-    IsPlayingBack = 6; // CDemoPlayer
     AutoCompletionFunc = 66; // listdemo_CompletionFunc
-    SetSignonState = 15; // CClientState
-    CL_IsRecordingMovie = 2; // endmovie
-    GetCurrentMap = 25; // CEngineTool
-    m_szLevelName = 36; // CEngineTool::GetCurrentMap
-    Cbuf_AddText = 46; // CEngineClient::ClientCmd
     ClientCommand = 39; // CVEngineServer (TODO)
 
     // vstdlib.dll
@@ -50,21 +41,12 @@ void Portal2::LoadOffsets()
     InternalSetIntValue = 21; // ConVar
     ClientCmd = 7; // CEngineClient
     GetClientStateFunction = 11; // CEngineClient::ClientCmd
-    GetMaxClients = 20; // CEngineClient
-    GetGameDirectory = 35; // CEngineClient
+    Cbuf_AddText = 45; // CEngineClient::ClientCmd
     GetActiveSplitScreenPlayerSlot = 127; // CEngineClient
-    IsInCommentaryMode = 172; // CEngineClient
+    SetSignonState = 36; // CClientState
     HostState_OnClientConnected = 735; // CClientState::SetSignonState
     hoststate = 9; // HostState_OnClientConnected
-    Disconnect = 37; //  CClientState
-    demoplayer = 93; // CClientState::Disconnect
-    IsPlayingBack = 7; // CDemoPlayer
     AutoCompletionFunc = 37; // listdemo_CompletionFunc
-    SetSignonState = 36; // CClientState
-    CL_IsRecordingMovie = 8; // endmovie
-    GetCurrentMap = 26; // CEngineTool
-    m_szLevelName = 72; // CEngineTool::GetCurrentMap
-    Cbuf_AddText = 45; // CEngineClient::ClientCmd
     ClientCommand = 39; // CVEngineServer
 
     // libvstdlib.so

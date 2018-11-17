@@ -9,7 +9,6 @@ class Engine : public Module {
 public:
     CHostState* hoststate = nullptr;
 
-    using _GetMaxClients = int (*)();
     using _Cbuf_AddText = void(__cdecl*)(int slot, const char* pText, int nTickDelay);
 #ifdef _WIN32
     using _GetActiveSplitScreenPlayerSlot = int (*)();
@@ -18,7 +17,6 @@ public:
 #endif
      using _ClientCommand = int(__func*)(void* thisptr, void* pEdict, const char* szFmt, ...);
 
-    _GetMaxClients GetMaxClients = nullptr;
     _GetActiveSplitScreenPlayerSlot GetActiveSplitScreenPlayerSlot = nullptr;
     _Cbuf_AddText Cbuf_AddText = nullptr;
     _ClientCommand ClientCommand = nullptr;

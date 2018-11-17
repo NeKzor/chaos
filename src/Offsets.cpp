@@ -10,10 +10,7 @@ int m_pConCommandList;
 
 // CEngineClient
 int ClientCmd;
-int GetMaxClients;
-int GetGameDirectory;
 int GetActiveSplitScreenPlayerSlot;
-int IsInCommentaryMode;
 
 // ConVar
 int InternalSetValue;
@@ -22,13 +19,6 @@ int InternalSetIntValue;
 
 // CClientState
 int SetSignonState;
-int Disconnect;
-
-// CDemoPlayer
-int IsPlayingBack;
-
-// CEngineTool
-int GetCurrentMap;
 
 // CVEngineServer
 int ClientCommand;
@@ -36,11 +26,8 @@ int ClientCommand;
 // Others
 int GetClientStateFunction;
 int cl;
-int demoplayer;
 int AutoCompletionFunc;
 int HostState_OnClientConnected;
 int hoststate;
-int CL_IsRecordingMovie;
-int m_szLevelName;
 int Cbuf_AddText;
 }
