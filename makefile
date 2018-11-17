@@ -38,6 +38,4 @@ pre:
 	@$(CREATE) $(ODIR)Utils/
 
 post:
-	@$(CREATE) "$(STEAM)Portal 2/portal2/addons"
-	@$(COPY) "addons/chaos.vdf" "$(STEAM)Portal 2/portal2/addons"
-	@$(EXPORT) "$(BINARY)" "$(STEAM)Portal 2/portal2/addons/$(BINARY)"
+	@$(EXPORT) "$(BINARY)" "$(STEAM)Portal 2/$(BINARY)"

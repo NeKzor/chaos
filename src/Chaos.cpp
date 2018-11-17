@@ -27,7 +27,7 @@ Chaos::Chaos()
     this->curState = nullptr;
     this->queue = std::vector<State*>();
     this->mode = ChaosMode::Default;
-    this->seed = static_cast<unsigned int>(time(0));
+    this->SetSeed(static_cast<unsigned int>(time(0)));
     this->cooldown = true;
     this->clients = std::vector<void*>();
 }

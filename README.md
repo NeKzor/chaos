@@ -1,4 +1,4 @@
-[![Build Version](https://img.shields.io/badge/version-v1.0-lightgreen.svg)](https://github.com/NeKzor/chaos)
+[![Build Version](https://img.shields.io/badge/version-v1.0-brightgreen.svg)](https://github.com/NeKzor/chaos)
 [![Release Status](https://img.shields.io/github/release/NeKzor/chaos/all.svg)](https://github.com/NeKzor/chaos/releases)
 
 ## Supported Systems
