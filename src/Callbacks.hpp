@@ -21,7 +21,7 @@ extern State NoPortalFunneling;
 extern State PhysTimescale;
 extern State NotSoFastOkay;
 extern State RoutingGod;
-extern State ClosingEyes;
+extern State FallingAsleep;
 extern State DemoUi;
 extern State PortalLinkage;
 extern State MansNotHot;

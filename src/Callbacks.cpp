@@ -1,5 +1,7 @@
 #include "Callbacks.hpp"
 
+#include <algorithm>
+
 #include "Chaos.hpp"
 #include "Command.hpp"
 #include "State.hpp"
@@ -388,7 +390,7 @@ CHAOS(RoutingGod)
     }
 }
 
-CHAOS(ClosingEyes)
+CHAOS(FallingAsleep)
 {
     if (!state->isInitialized) {
         state->isInitialized = true;

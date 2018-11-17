@@ -7,7 +7,7 @@ class Client : public Module {
 public:
     Interface* g_HudChat;
 
-    using _ChatPrintf = void(__func*)(void* thisptr, int iPlayerIndex, int iFilter, const char* fmt, ...);
+    using _ChatPrintf = void(*)(void* thisptr, int iPlayerIndex, int iFilter, const char* fmt, ...);
     _ChatPrintf ChatPrintf = nullptr;
 
 public:

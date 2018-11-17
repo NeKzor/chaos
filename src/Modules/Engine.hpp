@@ -15,7 +15,7 @@ public:
 #else
     using _GetActiveSplitScreenPlayerSlot = int (*)(void* thisptr);
 #endif
-     using _ClientCommand = int(__func*)(void* thisptr, void* pEdict, const char* szFmt, ...);
+     using _ClientCommand = int(*)(void* thisptr, void* pEdict, const char* szFmt, ...);
 
     _GetActiveSplitScreenPlayerSlot GetActiveSplitScreenPlayerSlot = nullptr;
     _Cbuf_AddText Cbuf_AddText = nullptr;

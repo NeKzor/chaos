@@ -1,5 +1,6 @@
 #include "Chaos.hpp"
 
+#include <algorithm>
 #include <chrono>
 #include <cstring>
 #include <stdarg.h>
@@ -12,8 +13,7 @@
 
 #include "Command.hpp"
 #include "Game.hpp"
-
-#include "Utils/SDK.hpp"
+#include "Utils.hpp"
 
 Chaos chaos;
 EXPOSE_SINGLE_INTERFACE_GLOBALVAR(Chaos, IServerPluginCallbacks, INTERFACEVERSION_ISERVERPLUGINCALLBACKS, chaos);
@@ -27,7 +27,7 @@ Chaos::Chaos()
     this->curState = nullptr;
     this->queue = std::vector<State*>();
     this->mode = ChaosMode::Default;
-    this->seed = std::time(0);
+    this->seed = static_cast<unsigned int>(time(0));
     this->cooldown = true;
     this->clients = std::vector<void*>();
 }
@@ -52,7 +52,7 @@ bool Chaos::Load(CreateInterfaceFn interfaceFactory, CreateInterfaceFn gameServe
             this->modules->AddModule<Client>(&client);
             this->modules->InitAll();
 
-            if (engine && client) {
+            if (engine && client && engine->hasLoaded && client->hasLoaded) {
                 this->StartMainThread();
 
                 console->PrintActive("Loaded chaos-plugin, Version %s\n", this->Version());
