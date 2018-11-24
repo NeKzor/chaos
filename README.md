@@ -1,4 +1,4 @@
-[![Build Version](https://img.shields.io/badge/version-v1.0-brightgreen.svg)](https://github.com/NeKzor/chaos)
+[![Build Version](https://img.shields.io/badge/version-v1.1-brightgreen.svg)](https://github.com/NeKzor/chaos)
 [![Release Status](https://img.shields.io/github/release/NeKzor/chaos/all.svg)](https://github.com/NeKzor/chaos/releases)
 
 ## Supported Systems
@@ -15,7 +15,10 @@
 | chaos_reset_queue | cmd | Resets chaos mode queue. |
 | chaos_set_seed | cmd | Sets the seed to generate randomness. |
 | chaos_set_quantity | cmd | Sets quantity of specific state. |
+| chaos_set_next | cmd | Sets specific state to be invoked next. |
 | chaos_states | cmd | Prints all possible states. |
+| chaos_pause | cmd | Pauses or unpauses chaos mode. |
+| chaos_skip | cmd | Skips current state. |
 | chaos_mode | 0 | Mode of chaos-plugin.<br>0 = Every state occurs multiple times.<br>1 = Every state only occurs once.<br>Every state only occurs once until every state occurred.|
 | chaos_time | 30 | How long a state should last, in seconds.<br>-1 = Random number between chaos_time_lower_bound and chaos_time_upper_bound.<br>Value cannot be lower than 10 seconds. |
 | chaos_time_lower_bound | 30 | See chaos_time. |

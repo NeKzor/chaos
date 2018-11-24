@@ -2,11 +2,12 @@
 
 #include <vector>
 
-State::State(const char* name, _StateCallback callback)
+State::State(const char* name, _StateCallback callback, StateAction action)
     : isInitialized(false)
     , name(name)
     , callback(callback)
     , quantity(1)
+    , action(action)
 {
     State::list.push_back(this);
 }

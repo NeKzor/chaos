@@ -3,6 +3,7 @@
 #include <algorithm>
 
 #include "Chaos.hpp"
+#include "Cheats.hpp"
 #include "Command.hpp"
 #include "State.hpp"
 #include "Variable.hpp"
@@ -62,7 +63,7 @@ CHAOS(PPNF)
     }
 }
 
-CHAOS(ThirdPerson)
+CHAOS2(ThirdPerson)
 {
     if (!state->isInitialized) {
         state->isInitialized = true;
@@ -85,8 +86,8 @@ CHAOS(PropSpawning)
 
     if (lucky) {
         chaos.EachClient("ent_create_portal_weighted_cube");
-        chaos.EachClient("npc_create npc_portal_turret_floor", 60);
-        chaos.EachClient("ent_create prop_button", 120);
+        chaos.EachClient("ent_create prop_button");
+        chaos.EachClient("ent_create_portal_weighted_cube");
     }
 }
 
@@ -123,6 +124,7 @@ CHAOS(FPS)
 {
     static Variable fps_max;
     static Variable fps_max_splitscreen;
+
     static int fps_max_default;
     static int fps_max_splitscreen_default;
 
@@ -172,6 +174,8 @@ CHAOS(PortalResize)
 
     if (lucky) {
         chaos.BufferCommand("Portals_ResizeAll 20 50");
+    } else {
+        chaos.BufferCommand("Portals_ResizeAll 30 55"); // Dunno the exact size
     }
 }
 
@@ -195,7 +199,7 @@ CHAOS(Gravity)
     }
 }
 
-CHAOS(FakeLag)
+CHAOS3(FakeLag)
 {
     static Variable net_fakelag;
 
@@ -227,17 +231,18 @@ CHAOS(DualGun)
 
 CHAOS(NoCrosshair)
 {
-    static Variable r_drawvgui;
+    static Variable crosshair;
+
     if (!state->isInitialized) {
-        r_drawvgui = Variable("r_drawvgui");
-        state->isInitialized = !!r_drawvgui;
+        crosshair = Variable("crosshair");
+        state->isInitialized = !!crosshair;
         return;
     }
 
     if (lucky) {
-        r_drawvgui.SetValue(0);
+        crosshair.SetValue(0);
     } else {
-        r_drawvgui.SetValue(1);
+        crosshair.SetValue(1);
     }
 }
 
@@ -346,6 +351,7 @@ CHAOS(RoutingGod)
     static Variable developer;
     static Variable contimes;
     static Variable con_notifytime;
+    static Variable mat_leafvis;
 
     if (!state->isInitialized) {
         r_drawclipbrushes = Variable("r_drawclipbrushes");
@@ -356,6 +362,7 @@ CHAOS(RoutingGod)
         developer = Variable("developer");
         contimes = Variable("contimes");
         con_notifytime = Variable("con_notifytime");
+        mat_leafvis = Variable("mat_leafvis");
         state->isInitialized = !!r_drawclipbrushes
             && !!vcollide_wireframe
             && !!phys_show_active
@@ -363,7 +370,8 @@ CHAOS(RoutingGod)
             && !!sv_showhitboxes
             && !!developer
             && !!contimes
-            && !!con_notifytime;
+            && !!con_notifytime
+            && !!mat_leafvis;
         return;
     }
 
@@ -376,6 +384,7 @@ CHAOS(RoutingGod)
         developer.SetValue(2);
         contimes.SetValue(64);
         con_notifytime.SetValue(999);
+        mat_leafvis.SetValue(3);
         //chaos.EachClient("developer 2");
     } else {
         r_drawclipbrushes.SetValue(0);
@@ -386,11 +395,12 @@ CHAOS(RoutingGod)
         developer.SetValue(0);
         contimes.SetValue(8);
         con_notifytime.SetValue(8);
+        mat_leafvis.SetValue(0);
         //chaos.EachClient("developer 0");
     }
 }
 
-CHAOS(FallingAsleep)
+CHAOS2(PassingOut)
 {
     if (!state->isInitialized) {
         state->isInitialized = true;
@@ -400,11 +410,11 @@ CHAOS(FallingAsleep)
     if (lucky) {
         chaos.EachClient("fadeout %i 0 0 0 255", std::max(chaos_time.GetInt(), 10));
     } else {
-        chaos.EachClient("fadein");
+        chaos.EachClient("fadein 0 0 0 0 0");
     }
 }
 
-CHAOS(DemoUi)
+CHAOS(AnnoyingUi)
 {
     if (!state->isInitialized) {
         state->isInitialized = true;
@@ -414,10 +424,12 @@ CHAOS(DemoUi)
     if (lucky) {
         chaos.EachClient("demoui");
         chaos.EachClient("demoui2");
+        //chaos.EachClient("fogui");
+        //chaos.EachClient("open_econui");
     }
 }
 
-CHAOS(PortalLinkage)
+CHAOS2(PortalLinkage)
 {
     if (!state->isInitialized) {
         state->isInitialized = true;
@@ -439,11 +451,12 @@ CHAOS(MapSkip)
     }
 
     if (lucky) {
-        chaos.BufferCommand("transition_map");
+        chaos.BufferCommand("ent_fire @transition_from_map trigger");
+        chaos.BufferCommand("fadein 0 0 0 0 0", 60);
     }
 }
 
-CHAOS(MansNotHot)
+CHAOS2(MansNotHot)
 {
     if (!state->isInitialized) {
         state->isInitialized = true;
@@ -452,17 +465,19 @@ CHAOS(MansNotHot)
 
     if (lucky) {
         chaos.EachClient("ent_fire !self ignite");
+        chaos.EachClient("ent_fire !self ignitelifetime %i", std::max(chaos_time.GetInt(), 10));
     } else {
         chaos.EachClient("ent_fire !self ignitelifetime 0");
     }
 }
 
-CHAOS(MotionBlur)
+CHAOS2(MotionBlur)
 {
     static Variable mat_motion_blur_enabled;
     static Variable mat_motion_blur_falling_min;
     static Variable mat_motion_blur_percent_of_screen_max;
     static Variable mat_motion_blur_strength;
+
     static int default_mat_motion_blur_enabled;
     static float default_mat_motion_blur_falling_min;
     static float default_mat_motion_blur_percent_of_screen_max;

@@ -12,7 +12,7 @@
 #include "State.hpp"
 #include "Utils/SDK.hpp"
 
-#define CHAOS_VERSION "1.0"
+#define CHAOS_VERSION "1.1"
 #define CHAOS_BUILD __TIME__ " " __DATE__
 #define CHAOS_WEB "https://nekzor.github.io/chaos"
 
@@ -36,6 +36,7 @@ public:
     Cheats* cheats;
 
     State* curState;
+    int queuedIndex;
     std::vector<State*> queue;
 
     ChaosMode mode;
@@ -43,6 +44,8 @@ public:
     unsigned int seed;
     bool cooldown;
     std::vector<void*> clients;
+    std::atomic<bool> isPaused;
+    std::atomic<bool> shouldSkip;
 
 private:
     std::thread mainThread;
@@ -88,6 +91,7 @@ public:
     void SetSeed(const int seed);
     const int GetDelay();
     void Run();
+    void RunPause(std::chrono::time_point<std::chrono::_V2::steady_clock, std::chrono::nanoseconds>& future);
 
 private:
     void StartMainThread();

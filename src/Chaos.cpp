@@ -19,17 +19,22 @@ Chaos chaos;
 EXPOSE_SINGLE_INTERFACE_GLOBALVAR(Chaos, IServerPluginCallbacks, INTERFACEVERSION_ISERVERPLUGINCALLBACKS, chaos);
 
 Chaos::Chaos()
+    : game(Game::CreateNew())
+    , plugin(new Plugin())
+    , modules(new Modules())
+    , cheats(new Cheats())
+    , curState(nullptr)
+    , queuedIndex(-1)
+    , queue()
+    , mode(ChaosMode::Default)
+    , isRunning(false)
+    , cooldown(true)
+    , clients()
+    , isPaused(false)
+    , shouldSkip(false)
+    , mainIsRunning(false)
 {
-    this->modules = new Modules();
-    this->cheats = new Cheats();
-    this->plugin = new Plugin();
-    this->game = Game::CreateNew();
-    this->curState = nullptr;
-    this->queue = std::vector<State*>();
-    this->mode = ChaosMode::Default;
     this->SetSeed(static_cast<unsigned int>(time(0)));
-    this->cooldown = true;
-    this->clients = std::vector<void*>();
 }
 
 // Used callbacks
@@ -39,13 +44,21 @@ bool Chaos::Load(CreateInterfaceFn interfaceFactory, CreateInterfaceFn gameServe
     if (!console->Init())
         return false;
 
+    /* // Oof
+    auto sar = Memory::GetModuleHandleByName(MODULE("sar"));
+    if (sar) {
+        console->Warning("Please load this plugin before SourceAutoRecord!\n");
+        Memory::CloseModuleHandle(sar);
+        return false;
+    } */
+
     if (this->game) {
         this->game->LoadOffsets();
 
         this->modules->AddModule<Tier1>(&tier1);
         this->modules->InitAll();
 
-        if (tier1->hasLoaded) {
+        if (tier1 && tier1->hasLoaded) {
             this->cheats->Init();
 
             this->modules->AddModule<Engine>(&engine);
@@ -82,11 +95,41 @@ void Chaos::LevelShutdown()
 {
     console->DevMsg("Chaos::LevelShutdown\n");
     this->clients.clear();
+
+    if (this->curState && this->curState->action == StateAction::EnableAndShutdown) {
+        this->curState->Reset();
+        console->DevMsg("chaos: %s (shutdown)\n", this->curState->name);
+    }
 }
 void Chaos::ClientFullyConnect(void* pEdict)
 {
     console->DevMsg("Chaos::ClientFullyConnect -> pEdict: %p\n", pEdict);
     this->clients.push_back(pEdict);
+}
+void Chaos::ClientActive(void* pEntity)
+{
+    console->DevMsg("Chaos::ClientActive -> pEntity: %p\n", pEntity);
+
+    if (!this->clients.empty() && this->clients.at(0) == pEntity) {
+        if (this->curState && this->curState->action != StateAction::None) {
+            this->curState->Dispatch();
+            console->DevMsg("chaos: %s (re-enable)\n", this->curState->name);
+        }
+    }
+}
+void Chaos::Pause()
+{
+    if (this->isRunning) {
+        this->isPaused = true;
+        console->Print("Paused chaos mode!\n");
+    }
+}
+void Chaos::UnPause()
+{
+    if (this->isRunning) {
+        this->isPaused = false;
+        console->Print("Unpaused chaos mode!\n");
+    }
 }
 
 // Utilities
@@ -153,6 +196,7 @@ void Chaos::Start()
 void Chaos::Stop()
 {
     this->isRunning = false;
+    this->isPaused = false;
     if (this->curState) {
         this->curState->Reset();
     }
@@ -166,7 +210,7 @@ void Chaos::Reset()
 
     this->queue = std::vector<State*>();
     for (const auto& state : State::list) {
-        for (int i = 0; i < state->quantity; ++i) {
+        for (auto i = 0; i < state->quantity; ++i) {
             this->queue.push_back(state);
         }
     }
@@ -227,8 +271,11 @@ void Chaos::Run()
         }
     }
 
-    // Dispatch random state
-    auto index = std::rand() % this->queue.size();
+    // Dispatch next state
+    auto index = (this->queuedIndex == -1)
+        ? std::rand() % this->queue.size()
+        : this->queuedIndex;
+
     this->curState = this->queue.at(index);
     this->curState->Dispatch();
     console->DevMsg("chaos: %s\n", this->curState->name);
@@ -241,6 +288,16 @@ void Chaos::Run()
     if (mode > 0) {
         this->queue.erase(this->queue.begin() + index);
     }
+
+    this->queuedIndex = -1;
+}
+void Chaos::RunPause(std::chrono::time_point<std::chrono::_V2::steady_clock, std::chrono::nanoseconds>& future)
+{
+    auto pausedAt = future - std::chrono::steady_clock::now();
+    while (this->isPaused && this->isRunning) {
+        future = std::chrono::steady_clock::now() + pausedAt;
+        GO_THE_FUCK_TO_SLEEP(1);
+    }
 }
 
 // Main loop
@@ -249,26 +306,41 @@ void Chaos::StartMainThread()
     this->mainIsRunning = true;
     this->mainThread = std::thread([this]() {
         this->Reset();
+
         while (this->mainIsRunning) {
             while (this->isRunning) {
-                auto then = std::chrono::steady_clock::now() + std::chrono::seconds(this->GetDelay());
+                auto future = std::chrono::steady_clock::now() + std::chrono::seconds(this->GetDelay());
+
                 while (this->isRunning) {
-                    if (std::chrono::steady_clock::now() < then) {
+                    this->RunPause(future);
+
+                    if (std::chrono::steady_clock::now() < future || !this->isRunning) {
+                        if (this->shouldSkip && !this->cooldown) {
+                            console->Print("Skipped state!\n");
+                            this->Run();
+                            this->shouldSkip = false;
+                            this->cooldown = true;
+                            break;
+                        }
+
                         GO_THE_FUCK_TO_SLEEP(1);
                         continue;
                     }
 
                     // Delay again if we hit a loading screen or menu
-                    then = std::chrono::steady_clock::now();
+                    future = std::chrono::steady_clock::now();
                     while (this->isRunning) {
                         auto notInGame = !engine->hoststate->m_activeGame
-                            || engine->hoststate->m_currentState != HOSTSTATES::HS_RUN;
+                            || engine->hoststate->m_currentState != HOSTSTATES::HS_RUN
+                            || this->clients.empty();
 
-                        then = (notInGame)
+                        future = (notInGame)
                             ? std::chrono::steady_clock::now() + std::chrono::seconds(5)
-                            : then;
+                            : future;
 
-                        if (std::chrono::steady_clock::now() < then) {
+                        this->RunPause(future);
+
+                        if (std::chrono::steady_clock::now() < future || !this->isRunning) {
                             GO_THE_FUCK_TO_SLEEP(1);
                             continue;
                         }
@@ -297,12 +369,6 @@ BOOL WINAPI DllMain(HINSTANCE instance, DWORD reason, LPVOID reserved)
 #endif
 
 #pragma region Unused callbacks
-void Chaos::Pause()
-{
-}
-void Chaos::UnPause()
-{
-}
 void Chaos::LevelInit(char const* pMapName)
 {
 }
@@ -310,9 +376,6 @@ void Chaos::ServerActivate(void* pEdictList, int edictCount, int clientMax)
 {
 }
 void Chaos::GameFrame(bool simulating)
-{
-}
-void Chaos::ClientActive(void* pEntity)
 {
 }
 void Chaos::ClientDisconnect(void* pEntity)

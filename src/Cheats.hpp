@@ -23,3 +23,6 @@ extern Command chaos_reset_queue;
 extern Command chaos_set_seed;
 extern Command chaos_set_quantity;
 extern Command chaos_states;
+extern Command chaos_pause;
+extern Command chaos_set_next;
+extern Command chaos_skip;

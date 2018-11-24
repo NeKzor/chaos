@@ -7,7 +7,7 @@
 
 #include "Chaos.hpp"
 
-Variable chaos_mode = Variable("chaos_mode", "0",
+Variable chaos_mode = Variable("chaos_mode", "0", 0,
     "Mode of chaos-plugin. "
     "0 = Every state occurs multiple times, "
     "1 = Every state only occurs once, "
@@ -74,7 +74,7 @@ CON_COMMAND(chaos_set_seed, "Sets the seed to generate randomness.\n")
         return console->Print("Current seed: %u\n", chaos.seed);
     }
 
-    if (chaos.isRunning) {
+    if (chaos.isRunning && !chaos.isPaused) {
         return console->Print("Cannot set seed during chaos mode!\n");
     }
 
@@ -94,7 +94,7 @@ CON_COMMAND(chaos_set_quantity, "Sets quantity of specific state. "
                               "Usage: chaos_set_quantity <state_name> <quantity_number>\n");
     }
 
-    if (chaos.isRunning) {
+    if (chaos.isRunning && !chaos.isPaused) {
         return console->Print("Cannot set quantity during chaos mode!\n");
     }
 
@@ -104,9 +104,11 @@ CON_COMMAND(chaos_set_quantity, "Sets quantity of specific state. "
             console->Print("Changed quantity of %s from %i to %i.\n", state->name, state->quantity, quantity);
             state->quantity = quantity;
             chaos.Reset();
-            break;
+            return;
         }
     }
+
+    console->Print("State with the name %s does not exist! Use chaos_states to list all possible states.\n", args[1]);
 }
 CON_COMMAND(chaos_states, "Prints all possible states.\n")
 {
@@ -125,5 +127,65 @@ CON_COMMAND(chaos_states, "Prints all possible states.\n")
 
     if (chaos.isRunning) {
         console->Print("Probabilities are not accurate during chaos mode.\n");
+    }
+}
+CON_COMMAND(chaos_pause, "Pauses or unpauses chaos mode.\n")
+{
+    if (!chaos.isRunning) {
+        return console->Print("Chaos mode is not runnging!\n");
+    }
+
+    chaos.isPaused = !chaos.isPaused;
+    console->Print("%s chaos mode!\n", (chaos.isPaused) ? "Paused" : "Unpaused");
+}
+CON_COMMAND(chaos_set_next, "Sets specific state to be invoked next. "
+                            "Usage: chaos_set_next <state_name>\n")
+{
+    if (args.ArgC() != 2) {
+        return console->Print("Sets specific state to be invoked next. "
+                              "Usage: chaos_set_next <state_name>\n");
+    }
+
+    if (!chaos.isRunning) {
+        return console->Print("Chaos mode not running!\n");
+    }
+
+    for (const auto& state : State::list) {
+        if (!std::strcmp(args[1], state->name)) {
+            auto index = 0;
+            for (const auto& item : chaos.queue) {
+                if (!std::strcmp(item->name, state->name)) {
+                    chaos.queuedIndex = index;
+                    return console->Print("State %s will be invoked after %s.\n", state->name, chaos.curState->name);
+                }
+                ++index;
+            }
+            return console->Print("State is currently not in the queue!\n");
+        }
+    }
+
+    console->Print("State with the name %s does not exist! Use chaos_states to list all possible states.\n", args[1]);
+}
+CON_COMMAND(chaos_skip, "Skips current state.\n")
+{
+    if (!chaos.isRunning) {
+        return console->Print("Chaos mode is not running!\n");
+    }
+
+    if (chaos.isPaused) {
+        return console->Print("Chaos mode is paused!\n");
+    }
+
+    if (chaos.cooldown) {
+        return console->Print("There is nothing to skip!\n");
+    }
+
+    chaos.shouldSkip = true;
+}
+CON_COMMAND(chaos_cmd, "Test.\n")
+{
+    if (args.ArgC() == 2) {
+        chaos.EachClient("echo %s", args[1]);
+        chaos.EachClient("%s", args[1]);
     }
 }
