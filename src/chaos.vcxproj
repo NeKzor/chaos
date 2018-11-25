@@ -122,7 +122,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Callbacks.cpp" />
+    <ClCompile Include="States.cpp" />
     <ClCompile Include="Chaos.cpp" />
     <ClCompile Include="Cheats.cpp" />
     <ClCompile Include="Command.cpp" />
@@ -142,7 +142,7 @@
     <ClCompile Include="Variable.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Callbacks.hpp" />
+    <ClInclude Include="States.hpp" />
     <ClInclude Include="Chaos.hpp" />
     <ClInclude Include="Cheats.hpp" />
     <ClInclude Include="Command.hpp" />

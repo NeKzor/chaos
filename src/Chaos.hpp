@@ -1,5 +1,6 @@
 #pragma once
 #include <atomic>
+#include <random>
 #include <thread>
 #include <vector>
 
@@ -42,6 +43,7 @@ public:
     ChaosMode mode;
     std::atomic<bool> isRunning;
     unsigned int seed;
+    std::default_random_engine rng;
     bool cooldown;
     std::vector<void*> clients;
     std::atomic<bool> isPaused;
@@ -80,14 +82,16 @@ public:
     const char* Build() { return CHAOS_BUILD; }
     const char* Website() { return CHAOS_WEB; }
 
-    void BufferCommand(const char* text, int delay = 0);
-    void EachClient(const char* fmt, ...);
+    void ServerCommand(const char* fmt, ...);
+    void ClientCommand(const char* fmt, ...);
     void Chat(const char* fmt, ...);
     void Cleanup();
 
     void Start();
     void Stop();
     void Reset();
+    void Invoke(int delay = 0);
+    void InvokeReset();
     void SetSeed(const int seed);
     const int GetDelay();
     void Run();

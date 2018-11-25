@@ -3,8 +3,6 @@
 #include "Utils.hpp"
 #include "Variable.hpp"
 
-extern Variable sv_cheats;
-
 class Engine : public Module {
 public:
     CHostState* hoststate = nullptr;
@@ -21,6 +19,8 @@ public:
     _Cbuf_AddText Cbuf_AddText = nullptr;
     _ClientCommand ClientCommand = nullptr;
 
+    void* s_CommandBuffer = nullptr;
+
     Engine();
     bool Init() override;
     void Shutdown() override;
@@ -28,3 +28,7 @@ public:
 };
 
 extern Engine* engine;
+
+extern Variable sv_cheats;
+extern Variable sv_gravity;
+extern Variable sv_friction;

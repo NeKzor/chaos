@@ -26,6 +26,9 @@ int ClientCommand;
 // CBaseHudChat
 int ChatPrintf;
 
+// CCommandBuffer
+int m_bWaitEnabled;
+
 // Others
 int GetClientStateFunction;
 int cl;
@@ -33,6 +36,8 @@ int AutoCompletionFunc;
 int HostState_OnClientConnected;
 int hoststate;
 int Cbuf_AddText;
+int s_CommandBuffer;
+int CCommandBufferSize;
 int GetHud;
 int FindElement;
 }

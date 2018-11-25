@@ -50,8 +50,7 @@ public:
     void AddFlag(int value);
     void RemoveFlag(int value);
 
-    void Unlock(bool asCheat = true);
-    void Notify(bool notify);
+    void Modify(int flagsToRemove = 0, int flagsToAdd = 0);
     void Restore();
 
     void DisableChange();

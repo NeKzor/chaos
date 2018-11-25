@@ -27,9 +27,6 @@ $(ODIR)%.o: $(SDIR)%.cpp $(SDIR)%.hpp
 	@$(CC) $(CFLAGS) -c -o $@ $<
 
 clean:
-	@$(REMOVE) $(ODIR)chaos.o $(BINARY)
-
-clean-all:
 	@$(REMOVE)$(OBJS) $(BINARY)
 
 pre:

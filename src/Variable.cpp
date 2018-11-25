@@ -146,29 +146,15 @@ void Variable::RemoveFlag(int value)
 {
     this->SetFlags(this->GetFlags() & ~(value));
 }
-void Variable::Unlock(bool asCheat)
+void Variable::Modify(int flagsToRemove, int flagsToAdd)
 {
     if (this->ptr) {
         this->originalFlags = this->ptr->m_nFlags;
-        this->RemoveFlag(FCVAR_DEVELOPMENTONLY | FCVAR_HIDDEN);
-        if (asCheat) {
-            this->AddFlag(FCVAR_CHEAT);
+        if (flagsToRemove) {
+            this->RemoveFlag(flagsToRemove);
         }
-
-        // Save references in list to restore them later
-        if (this->isReference) {
-            Variable::list.push_back(this);
-        }
-    }
-}
-void Variable::Notify(bool notify)
-{
-    if (this->ptr) {
-        this->originalFlags = this->ptr->m_nFlags;
-        if (notify) {
-            this->AddFlag(FCVAR_NOTIFY);
-        } else {
-            this->RemoveFlag(FCVAR_NOTIFY);
+        if (flagsToAdd) {
+            this->AddFlag(flagsToAdd);
         }
 
         // Save references in list to restore them later

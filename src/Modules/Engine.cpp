@@ -6,6 +6,9 @@
 #include "Variable.hpp"
 
 Variable sv_cheats;
+Variable sv_gravity;
+Variable sv_friction;
+Variable sv_maxvelocity;
 
 Engine::Engine()
     : Module()
@@ -27,6 +30,13 @@ bool Engine::Init()
         }
 
         Memory::Read<_Cbuf_AddText>(ClientCmd + Offsets::Cbuf_AddText, &this->Cbuf_AddText);
+        Memory::Deref<void*>((uintptr_t)this->Cbuf_AddText + Offsets::s_CommandBuffer, &this->s_CommandBuffer);
+
+        if (this->s_CommandBuffer) {
+            auto m_bWaitEnabled = reinterpret_cast<bool*>((uintptr_t)s_CommandBuffer + Offsets::m_bWaitEnabled);
+            auto m_bWaitEnabled2 = reinterpret_cast<bool*>((uintptr_t)m_bWaitEnabled + Offsets::CCommandBufferSize);
+            *m_bWaitEnabled = *m_bWaitEnabled2 = true;
+        }
     }
 
     if (auto g_VEngineServer = Interface::Create(this->Name(), "VEngineServer0", false)) {
@@ -34,18 +44,33 @@ bool Engine::Init()
     }
 
     sv_cheats = Variable("sv_cheats");
-    if (!!sv_cheats) {
-        sv_cheats.Notify(false);
+    sv_gravity = Variable("sv_gravity");
+    sv_friction = Variable("sv_friction");
+    sv_maxvelocity = Variable("sv_maxvelocity");
+
+    if (!!sv_cheats && !!sv_gravity && !!sv_friction) {
+        sv_cheats.Modify(FCVAR_NOTIFY);
+        sv_gravity.Modify(FCVAR_NOTIFY);
+        sv_friction.Modify(FCVAR_NOTIFY | FCVAR_DEVELOPMENTONLY | FCVAR_HIDDEN, FCVAR_CHEAT);
+        sv_maxvelocity.Modify(FCVAR_NOTIFY | FCVAR_DEVELOPMENTONLY | FCVAR_HIDDEN, FCVAR_CHEAT);
     }
 
     return this->hasLoaded = this->hoststate
         && this->GetActiveSplitScreenPlayerSlot
         && this->Cbuf_AddText
+        && this->s_CommandBuffer
         && this->ClientCommand
-        && !!sv_cheats;
+        && !!sv_cheats
+        && !!sv_gravity
+        && !!sv_friction;
 }
 void Engine::Shutdown()
 {
+    if (this->s_CommandBuffer) {
+        auto m_bWaitEnabled = reinterpret_cast<bool*>((uintptr_t)s_CommandBuffer + Offsets::m_bWaitEnabled);
+        auto m_bWaitEnabled2 = reinterpret_cast<bool*>((uintptr_t)m_bWaitEnabled + Offsets::CCommandBufferSize);
+        *m_bWaitEnabled = *m_bWaitEnabled2 = false;
+    }
 }
 
 Engine* engine;

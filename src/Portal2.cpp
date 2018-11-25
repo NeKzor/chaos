@@ -20,6 +20,9 @@ void Portal2::LoadOffsets()
     ClientCmd = 7; // CEngineClient
     GetClientStateFunction = 4; // CEngineClient::ClientCmd
     Cbuf_AddText = 46; // CEngineClient::ClientCmd
+    s_CommandBuffer = 82; // Cbuf_AddText
+    CCommandBufferSize = 9556; // Cbuf_AddText
+    m_bWaitEnabled = 8265; // CCommandBuffer::AddText
     GetActiveSplitScreenPlayerSlot = 127; // CEngineClient
     SetSignonState = 15; // CClientState
     HostState_OnClientConnected = 684; // CClientState::SetSignonState
@@ -48,6 +51,9 @@ void Portal2::LoadOffsets()
     ClientCmd = 7; // CEngineClient
     GetClientStateFunction = 11; // CEngineClient::ClientCmd
     Cbuf_AddText = 45; // CEngineClient::ClientCmd
+    s_CommandBuffer = 69; // Cbuf_AddText
+    CCommandBufferSize = 9556; // Cbuf_AddText
+    m_bWaitEnabled = 8265; // CCommandBuffer::AddText
     GetActiveSplitScreenPlayerSlot = 127; // CEngineClient
     SetSignonState = 36; // CClientState
     HostState_OnClientConnected = 735; // CClientState::SetSignonState

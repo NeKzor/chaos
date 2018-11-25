@@ -1,45 +1,37 @@
 #pragma once
 #include <stdint.h>
+#include <string>
 #include <vector>
 
 class State;
-using _StateCallback = void (*)(State* state, bool lucky);
+using _InitCallback = void (*)(State* state);
 
-enum class StateAction {
-    None,
-    Enable,
-    EnableAndShutdown
+enum class CommandType {
+    NotSpecified,
+    ServerSide,
+    ClientSide
 };
 
 class State {
 public:
-    bool isInitialized;
     const char* name;
-    _StateCallback callback;
+    _InitCallback initCallback;
     int quantity;
-    StateAction action;
+    std::string on;
+    std::string off;
+    bool isTimed;
+    bool onceOnly;
+    bool turnOffBeforeLoading;
+    CommandType type;
 
     static std::vector<State*> list;
 
 public:
-    State(const char* name, _StateCallback callback, StateAction action = StateAction::None);
-
-    bool Init();
-    void Dispatch();
-    void Reset();
-
-    static void ResetAll();
+    State(const char* name, _InitCallback initCallback);
+    void Init();
 };
 
-#define CHAOS(name)                                 \
-    void name##_callback(State* state, bool lucky); \
-    State name = State(#name, name##_callback);     \
-    void name##_callback(State* state, bool lucky)
-#define CHAOS2(name)                                                 \
-    void name##_callback(State* state, bool lucky);                  \
-    State name = State(#name, name##_callback, StateAction::Enable); \
-    void name##_callback(State* state, bool lucky)
-#define CHAOS3(name)                                                            \
-    void name##_callback(State* state, bool lucky);                             \
-    State name = State(#name, name##_callback, StateAction::EnableAndShutdown); \
-    void name##_callback(State* state, bool lucky)
+#define CHAOS(name)                                  \
+    void name##_init_callback(State* state);         \
+    State name = State(#name, name##_init_callback); \
+    void name##_init_callback(State* state)

@@ -15,7 +15,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Callbacks.cpp">
+    <ClCompile Include="States.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Chaos.cpp">
@@ -71,7 +71,7 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Callbacks.hpp">
+    <ClInclude Include="States.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Chaos.hpp">

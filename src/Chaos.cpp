@@ -44,14 +44,6 @@ bool Chaos::Load(CreateInterfaceFn interfaceFactory, CreateInterfaceFn gameServe
     if (!console->Init())
         return false;
 
-    /* // Oof
-    auto sar = Memory::GetModuleHandleByName(MODULE("sar"));
-    if (sar) {
-        console->Warning("Please load this plugin before SourceAutoRecord!\n");
-        Memory::CloseModuleHandle(sar);
-        return false;
-    } */
-
     if (this->game) {
         this->game->LoadOffsets();
 
@@ -94,12 +86,14 @@ const char* Chaos::GetPluginDescription()
 void Chaos::LevelShutdown()
 {
     console->DevMsg("Chaos::LevelShutdown\n");
-    this->clients.clear();
 
-    if (this->curState && this->curState->action == StateAction::EnableAndShutdown) {
-        this->curState->Reset();
+    if (this->curState && this->curState->turnOffBeforeLoading) {
+        this->InvokeReset();
         console->DevMsg("chaos: %s (shutdown)\n", this->curState->name);
     }
+
+    // Make sure to clear the list after sending any client-side shutdown commands
+    this->clients.clear();
 }
 void Chaos::ClientFullyConnect(void* pEdict)
 {
@@ -111,8 +105,8 @@ void Chaos::ClientActive(void* pEntity)
     console->DevMsg("Chaos::ClientActive -> pEntity: %p\n", pEntity);
 
     if (!this->clients.empty() && this->clients.at(0) == pEntity) {
-        if (this->curState && this->curState->action != StateAction::None) {
-            this->curState->Dispatch();
+        if (this->curState && !this->curState->onceOnly) {
+            this->Invoke(60);
             console->DevMsg("chaos: %s (re-enable)\n", this->curState->name);
         }
     }
@@ -133,22 +127,37 @@ void Chaos::UnPause()
 }
 
 // Utilities
-void Chaos::BufferCommand(const char* text, int delay)
-{
-#ifdef _WIN32
-    auto slot = engine->GetActiveSplitScreenPlayerSlot();
-#else
-    auto slot = engine->GetActiveSplitScreenPlayerSlot(nullptr);
-#endif
-    engine->Cbuf_AddText(slot, text, delay);
-}
-void Chaos::EachClient(const char* fmt, ...)
+void Chaos::ServerCommand(const char* fmt, ...)
 {
     va_list argptr;
     va_start(argptr, fmt);
     char data[1024];
     vsnprintf(data, sizeof(data), fmt, argptr);
     va_end(argptr);
+
+#ifdef _WIN32
+    auto slot = engine->GetActiveSplitScreenPlayerSlot();
+#else
+    auto slot = engine->GetActiveSplitScreenPlayerSlot(nullptr);
+#endif
+
+    if (!sv_cheats.GetBool()) {
+        sv_cheats.SetValue(1);
+    }
+
+    engine->Cbuf_AddText(slot, data, 0);
+}
+void Chaos::ClientCommand(const char* fmt, ...)
+{
+    va_list argptr;
+    va_start(argptr, fmt);
+    char data[1024];
+    vsnprintf(data, sizeof(data), fmt, argptr);
+    va_end(argptr);
+
+    if (!sv_cheats.GetBool()) {
+        sv_cheats.SetValue(1);
+    }
 
     for (const auto& client : this->clients) {
         engine->ClientCommand(nullptr, client, data);
@@ -162,7 +171,11 @@ void Chaos::Chat(const char* fmt, ...)
     vsnprintf(data, sizeof(data), fmt, argptr);
     va_end(argptr);
 
-    client->ChatPrintf(client->g_HudChat->ThisPtr(), 0, 0, "%c%s", TextColor::COLOR_LOCATION, data);
+    if (this->clients.size() > 1) {
+        this->ServerCommand("say %s", data);
+    } else {
+        client->ChatPrintf(client->g_HudChat->ThisPtr(), 0, 0, "%c%s", TextColor::COLOR_LOCATION, data);
+    }
 }
 void Chaos::Cleanup()
 {
@@ -192,20 +205,20 @@ void Chaos::Start()
 {
     this->isRunning = true;
     this->cooldown = true;
+    this->Reset();
 }
 void Chaos::Stop()
 {
     this->isRunning = false;
     this->isPaused = false;
-    if (this->curState) {
-        this->curState->Reset();
-    }
+    this->queuedIndex = -1;
+    this->InvokeReset();
+    this->curState = nullptr;
 }
 void Chaos::Reset()
 {
-    if (this->curState) {
-        this->curState->Reset();
-    }
+    this->queuedIndex = -1;
+    this->InvokeReset();
     this->curState = nullptr;
 
     this->queue = std::vector<State*>();
@@ -215,15 +228,51 @@ void Chaos::Reset()
         }
     }
 
-    for (auto& state : this->queue) {
-        if (!state->Init()) {
-            console->Warning("chaos: Failed to initialize state: %s\n", state->name);
+    std::shuffle(this->queue.begin(), this->queue.end(), this->rng);
+}
+void Chaos::Invoke(int delay)
+{
+    if (this->curState) {
+        if (this->curState->on.size()) {
+            char command[1024];
+            if (this->curState->isTimed) {
+                auto time = std::max(chaos_time.GetInt(), 10);
+                std::snprintf(command, sizeof(command), this->curState->on.c_str(), time);
+            } else {
+                std::strncpy(command, this->curState->on.c_str(), sizeof(command));
+            }
+
+            if (this->curState->type == CommandType::ServerSide) {
+                this->ServerCommand("wait %i;%s", delay, command);
+            } else if (this->curState->type == CommandType::ClientSide) {
+                this->ClientCommand("wait %i;%s", delay, command);
+            } else {
+                console->Warning("Command type not set for state %s!\n", this->curState->name);
+            }
+        } else {
+            console->Warning("On string not set for state %s!\n", this->curState->name);
+        }
+    }
+}
+void Chaos::InvokeReset()
+{
+    if (this->curState) {
+        if (this->curState->off.size()) {
+            if (this->curState->type == CommandType::ServerSide) {
+                this->ServerCommand("%s", this->curState->off.c_str());
+            } else if (this->curState->type == CommandType::ClientSide) {
+                this->ClientCommand("%s", this->curState->off.c_str());
+            } else {
+                console->Warning("CommandType not set for state %s!\n", this->curState->name);
+            }
         }
     }
 }
 void Chaos::SetSeed(int seed)
 {
-    std::srand(this->seed = seed);
+    this->seed = seed;
+    std::srand(this->seed);
+    this->rng = std::default_random_engine(this->seed);
 }
 const int Chaos::GetDelay()
 {
@@ -250,10 +299,7 @@ const int Chaos::GetDelay()
 void Chaos::Run()
 {
     if (!this->cooldown) {
-        // Dispatch a reset on previous state
-        if (this->curState) {
-            this->curState->Reset();
-        }
+        this->InvokeReset();
         this->curState = nullptr;
         return;
     }
@@ -262,8 +308,7 @@ void Chaos::Run()
     auto mode = chaos_mode.GetInt();
     if (this->queue.size() == 0) {
         if (mode == 1) {
-            this->isRunning = false;
-            this->Reset();
+            this->Stop();
             console->Print("Chaos ended!\n");
             return;
         } else if (mode >= 2) {
@@ -271,22 +316,28 @@ void Chaos::Run()
         }
     }
 
-    // Dispatch next state
+    // Invoke next state
     auto index = (this->queuedIndex == -1)
         ? std::rand() % this->queue.size()
         : this->queuedIndex;
 
     this->curState = this->queue.at(index);
-    this->curState->Dispatch();
-    console->DevMsg("chaos: %s\n", this->curState->name);
+    this->Invoke();
 
+    console->DevMsg("chaos: %s\n", this->curState->name);
     if (chaos_spoiler.GetBool()) {
         chaos.Chat("%s", this->curState->name);
     }
 
     // Handle mode again
     if (mode > 0) {
-        this->queue.erase(this->queue.begin() + index);
+        for (auto&& state = this->queue.begin(); state != this->queue.end();) {
+            if (!std::strcmp((*state)->name, this->curState->name)) {
+                state = this->queue.erase(state);
+            } else {
+                ++state;
+            }
+        }
     }
 
     this->queuedIndex = -1;
@@ -305,7 +356,9 @@ void Chaos::StartMainThread()
 {
     this->mainIsRunning = true;
     this->mainThread = std::thread([this]() {
-        this->Reset();
+        for (const auto& state : State::list) {
+            state->Init();
+        }
 
         while (this->mainIsRunning) {
             while (this->isRunning) {

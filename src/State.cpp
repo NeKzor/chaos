@@ -2,28 +2,22 @@
 
 #include <vector>
 
-State::State(const char* name, _StateCallback callback, StateAction action)
-    : isInitialized(false)
-    , name(name)
-    , callback(callback)
+State::State(const char* name, _InitCallback initCallback)
+    : name(name)
+    , initCallback(initCallback)
     , quantity(1)
-    , action(action)
+    , on()
+    , off()
+    , isTimed(false)
+    , onceOnly(true)
+    , turnOffBeforeLoading(false)
+    , type(CommandType::NotSpecified)
 {
     State::list.push_back(this);
 }
-bool State::Init()
+void State::Init()
 {
-    this->isInitialized = false;
-    this->callback(this, false);
-    return this->isInitialized;
-}
-void State::Dispatch()
-{
-    this->callback(this, true);
-}
-void State::Reset()
-{
-    this->callback(this, false);
+    this->initCallback(this);
 }
 
 std::vector<State*> State::list;

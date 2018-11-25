@@ -19,11 +19,11 @@
 | chaos_states | cmd | Prints all possible states. |
 | chaos_pause | cmd | Pauses or unpauses chaos mode. |
 | chaos_skip | cmd | Skips current state. |
-| chaos_mode | 0 | Mode of chaos-plugin.<br>0 = Every state occurs multiple times.<br>1 = Every state only occurs once.<br>Every state only occurs once until every state occurred.|
+| chaos_mode | 0 | Mode of chaos-plugin.<br>0 = Default.<br>1 = States can only occur once, mode will end automatically.<br>2 = States can only occur once, mode will reset automatically. |
 | chaos_time | 30 | How long a state should last, in seconds.<br>-1 = Random number between chaos_time_lower_bound and chaos_time_upper_bound.<br>Value cannot be lower than 10 seconds. |
 | chaos_time_lower_bound | 30 | See chaos_time. |
 | chaos_time_upper_bound | 40 | See chaos_time. |
-| chaos_cooldown | 0 | Amount of seconds to wait until next state occurs.<br>-1 = Random number between chaos_cooldown_lower_bound and chaos_cooldown_upper_bound. |
+| chaos_cooldown | 0 | Amount of seconds to wait between states.<br>-1 = Random number between chaos_cooldown_lower_bound and chaos_cooldown_upper_bound. |
 | chaos_cooldown_lower_bound | 30 | See chaos_cooldown. |
 | chaos_cooldown_upper_bound | 40 | See chaos_cooldown. |
 | chaos_spoiler | 0 | Prints name of current state into chat. |
@@ -32,3 +32,4 @@
 
 - baister09 (motivation)
 - tanger2b (commands, coop testing)
+- spidda (coop testing)

@@ -9,9 +9,9 @@
 
 Variable chaos_mode = Variable("chaos_mode", "0", 0,
     "Mode of chaos-plugin. "
-    "0 = Every state occurs multiple times, "
-    "1 = Every state only occurs once, "
-    "2 = Every state only occurs once until every state occurred.\n");
+    "0 = Default, "
+    "1 = States can only occur once, mode will end automatically."
+    "2 = States can only occur once, mode will reset automatically.\n");
 Variable chaos_time = Variable("chaos_time", "30",
     "How long a state should last in seconds. "
     "-1 = Random number between \"chaos_time_lower_bound\" and \"chaos_time_upper_bound\". "
@@ -21,7 +21,7 @@ Variable chaos_time_lower_bound = Variable("chaos_time_lower_bound", "30",
 Variable chaos_time_upper_bound = Variable("chaos_time_upper_bound", "40",
     "See chaos_time.\n");
 Variable chaos_cooldown = Variable("chaos_cooldown", "0",
-    "Amount of seconds to wait until next state occurs. "
+    "Amount of seconds to wait between states. "
     "-1 = Random number between \"chaos_cooldown_lower_bound\" and \"chaos_cooldown_upper_bound\".\n");
 Variable chaos_cooldown_lower_bound = Variable("chaos_cooldown_lower_bound", "30",
     "See chaos_cooldown.\n");
@@ -46,12 +46,12 @@ CON_COMMAND(chaos_start, "Starts chaos mode.\n")
         return console->Print("Chaos mode already running!\n");
     }
 
-    // Secretly activate cheats which won't notify the player but is required
-    if (!sv_cheats.GetBool()) {
-        sv_cheats.SetValue(1);
+    chaos.Start();
+
+    if (chaos.clients.empty()) {
+        return console->Print("Chaos mode will run on next server start or restart.\n");
     }
 
-    chaos.Start();
     console->Print("Started chaos!\n");
 }
 CON_COMMAND(chaos_stop, "Stops chaos mode.\n")
@@ -101,6 +101,8 @@ CON_COMMAND(chaos_set_quantity, "Sets quantity of specific state. "
     for (const auto& state : State::list) {
         if (!std::strcmp(args[1], state->name)) {
             auto quantity = std::atoi(args[2]);
+            quantity = std::min(quantity, 100);
+            quantity = std::max(quantity, 0);
             console->Print("Changed quantity of %s from %i to %i.\n", state->name, state->quantity, quantity);
             state->quantity = quantity;
             chaos.Reset();
@@ -116,9 +118,7 @@ CON_COMMAND(chaos_states, "Prints all possible states.\n")
     console->Msg("state-name (probability)\n");
     for (const auto& state : State::list) {
         auto probability = ((float)state->quantity / total) * 100;
-        if (!state->isInitialized) {
-            console->Warning("%s (%.2f)\n", state->name, probability);
-        } else if (chaos.curState && !std::strcmp(chaos.curState->name, state->name)) {
+        if (chaos.curState && !std::strcmp(chaos.curState->name, state->name)) {
             console->PrintActive("%s (%.2f)\n", state->name, probability);
         } else {
             console->Print("%s (%.2f)\n", state->name, probability);
@@ -156,6 +156,9 @@ CON_COMMAND(chaos_set_next, "Sets specific state to be invoked next. "
             for (const auto& item : chaos.queue) {
                 if (!std::strcmp(item->name, state->name)) {
                     chaos.queuedIndex = index;
+                    if (!chaos.curState) {
+                        return console->Print("State %s will be invoked next.\n", state->name);
+                    }
                     return console->Print("State %s will be invoked after %s.\n", state->name, chaos.curState->name);
                 }
                 ++index;
@@ -181,11 +184,4 @@ CON_COMMAND(chaos_skip, "Skips current state.\n")
     }
 
     chaos.shouldSkip = true;
-}
-CON_COMMAND(chaos_cmd, "Test.\n")
-{
-    if (args.ArgC() == 2) {
-        chaos.EachClient("echo %s", args[1]);
-        chaos.EachClient("%s", args[1]);
-    }
 }
