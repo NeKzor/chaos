@@ -32,3 +32,4 @@ extern Engine* engine;
 extern Variable sv_cheats;
 extern Variable sv_gravity;
 extern Variable sv_friction;
+extern Variable sv_maxvelocity;

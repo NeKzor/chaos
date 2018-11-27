@@ -48,7 +48,7 @@ bool Engine::Init()
     sv_friction = Variable("sv_friction");
     sv_maxvelocity = Variable("sv_maxvelocity");
 
-    if (!!sv_cheats && !!sv_gravity && !!sv_friction) {
+    if (!!sv_cheats && !!sv_gravity && !!sv_friction && !!sv_maxvelocity) {
         sv_cheats.Modify(FCVAR_NOTIFY);
         sv_gravity.Modify(FCVAR_NOTIFY);
         sv_friction.Modify(FCVAR_NOTIFY | FCVAR_DEVELOPMENTONLY | FCVAR_HIDDEN, FCVAR_CHEAT);
@@ -62,7 +62,8 @@ bool Engine::Init()
         && this->ClientCommand
         && !!sv_cheats
         && !!sv_gravity
-        && !!sv_friction;
+        && !!sv_friction
+        && !!sv_maxvelocity;
 }
 void Engine::Shutdown()
 {
