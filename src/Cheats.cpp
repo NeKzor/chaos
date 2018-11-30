@@ -12,20 +12,20 @@ Variable chaos_mode = Variable("chaos_mode", "0", 0,
     "0 = Default, "
     "1 = States can only occur once, mode will end automatically."
     "2 = States can only occur once, mode will reset automatically.\n");
-Variable chaos_time = Variable("chaos_time", "30",
+Variable chaos_time = Variable("chaos_time", "30", 0,
     "How long a state should last in seconds. "
     "-1 = Random number between \"chaos_time_lower_bound\" and \"chaos_time_upper_bound\". "
     "Note: Value cannot be lower than 10 seconds.\n");
-Variable chaos_time_lower_bound = Variable("chaos_time_lower_bound", "30",
+Variable chaos_time_lower_bound = Variable("chaos_time_lower_bound", "30", 0,
     "See chaos_time.\n");
-Variable chaos_time_upper_bound = Variable("chaos_time_upper_bound", "40",
+Variable chaos_time_upper_bound = Variable("chaos_time_upper_bound", "40", 0,
     "See chaos_time.\n");
-Variable chaos_cooldown = Variable("chaos_cooldown", "0",
+Variable chaos_cooldown = Variable("chaos_cooldown", "0", 0,
     "Amount of seconds to wait between states. "
     "-1 = Random number between \"chaos_cooldown_lower_bound\" and \"chaos_cooldown_upper_bound\".\n");
-Variable chaos_cooldown_lower_bound = Variable("chaos_cooldown_lower_bound", "30",
+Variable chaos_cooldown_lower_bound = Variable("chaos_cooldown_lower_bound", "30", 0,
     "See chaos_cooldown.\n");
-Variable chaos_cooldown_upper_bound = Variable("chaos_cooldown_upper_bound", "40",
+Variable chaos_cooldown_upper_bound = Variable("chaos_cooldown_upper_bound", "40", 0,
     "See chaos_cooldown.\n");
 Variable chaos_spoiler = Variable("chaos_spoiler", "0", "Prints name of current state into chat.\n");
 
