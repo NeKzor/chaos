@@ -132,7 +132,7 @@ CON_COMMAND(chaos_states, "Prints all possible states.\n")
 CON_COMMAND(chaos_pause, "Pauses or unpauses chaos mode.\n")
 {
     if (!chaos.isRunning) {
-        return console->Print("Chaos mode is not runnging!\n");
+        return console->Print("Chaos mode is not running!\n");
     }
 
     chaos.isPaused = !chaos.isPaused;
