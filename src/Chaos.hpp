@@ -95,7 +95,7 @@ public:
     void SetSeed(const int seed);
     const int GetDelay();
     void Run();
-    void RunPause(std::chrono::time_point<std::chrono::_V2::steady_clock, std::chrono::nanoseconds>& future);
+    void RunPause(std::chrono::time_point<std::chrono::steady_clock, std::chrono::nanoseconds>& future);
 
 private:
     void StartMainThread();

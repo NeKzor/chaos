@@ -342,7 +342,7 @@ void Chaos::Run()
 
     this->queuedIndex = -1;
 }
-void Chaos::RunPause(std::chrono::time_point<std::chrono::_V2::steady_clock, std::chrono::nanoseconds>& future)
+void Chaos::RunPause(std::chrono::time_point<std::chrono::steady_clock, std::chrono::nanoseconds>& future)
 {
     auto pausedAt = future - std::chrono::steady_clock::now();
     while (this->isPaused && this->isRunning) {
