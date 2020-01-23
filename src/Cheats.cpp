@@ -98,7 +98,7 @@ CON_COMMAND(chaos_set_quantity, "Sets quantity of specific state. "
         return console->Print("Cannot set quantity during chaos mode!\n");
     }
 
-    for (const auto& state : State::list) {
+    for (const auto& state : State::GetList()) {
         if (!std::strcmp(args[1], state->name)) {
             auto quantity = std::atoi(args[2]);
             quantity = std::min(quantity, 100);
@@ -116,7 +116,7 @@ CON_COMMAND(chaos_states, "Prints all possible states.\n")
 {
     auto total = chaos.queue.size();
     console->Msg("state-name (probability)\n");
-    for (const auto& state : State::list) {
+    for (const auto& state : State::GetList()) {
         auto probability = ((float)state->quantity / total) * 100;
         if (chaos.curState && !std::strcmp(chaos.curState->name, state->name)) {
             console->PrintActive("%s (%.2f)\n", state->name, probability);
@@ -150,7 +150,7 @@ CON_COMMAND(chaos_set_next, "Sets specific state to be invoked next. "
         return console->Print("Chaos mode not running!\n");
     }
 
-    for (const auto& state : State::list) {
+    for (const auto& state : State::GetList()) {
         if (!std::strcmp(args[1], state->name)) {
             auto index = 0;
             for (const auto& item : chaos.queue) {

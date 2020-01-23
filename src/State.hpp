@@ -24,11 +24,11 @@ public:
     bool turnOffBeforeLoading;
     CommandType type;
 
-    static std::vector<State*> list;
-
 public:
     State(const char* name, _InitCallback initCallback);
     void Init();
+
+    static std::vector<State*>& GetList();
 };
 
 #define CHAOS(name)                                  \

@@ -13,11 +13,14 @@ State::State(const char* name, _InitCallback initCallback)
     , turnOffBeforeLoading(false)
     , type(CommandType::NotSpecified)
 {
-    State::list.push_back(this);
+    State::GetList().push_back(this);
 }
 void State::Init()
 {
     this->initCallback(this);
 }
-
-std::vector<State*> State::list;
+std::vector<State*>& State::GetList()
+{
+    static std::vector<State*> list;
+    return list;
+}

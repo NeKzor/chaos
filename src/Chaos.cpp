@@ -11,7 +11,6 @@
 #include "Modules/Module.hpp"
 #include "Modules/Tier1.hpp"
 
-#include "Command.hpp"
 #include "Game.hpp"
 #include "Utils.hpp"
 
@@ -222,7 +221,7 @@ void Chaos::Reset()
     this->curState = nullptr;
 
     this->queue = std::vector<State*>();
-    for (const auto& state : State::list) {
+    for (const auto& state : State::GetList()) {
         for (auto i = 0; i < state->quantity; ++i) {
             this->queue.push_back(state);
         }
@@ -356,7 +355,7 @@ void Chaos::StartMainThread()
 {
     this->mainIsRunning = true;
     this->mainThread = std::thread([this]() {
-        for (const auto& state : State::list) {
+        for (const auto& state : State::GetList()) {
             state->Init();
         }
 
